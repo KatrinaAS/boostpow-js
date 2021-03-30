@@ -54,8 +54,8 @@ describe('boost #BoostPowMetadata tests', () => {
       const metadata_string = '0100000000000000000000000000000000000000a4000000000000000000000000000000000000004e010000a0210000010000004200000000000000000000000000000000000000000000000000000000000000';
       const fromHex = index.BoostPowMetadata.fromHex(metadata_string);
 
-      const expected_hash = '2dd2ce3a9bd404105a56433e1e0ce8cfa458e0a3669ce45f56132fc23d18a125';
-      expect(bsv.crypto.Hash.sha256sha256(metadata_string).toString('hex')).to.eql(expected_hash)
+      const expected_hash = '25a1183dc22f13565fe49c66a3e058a4cfe80c1e3e43565a1004d49b3aced22d';
+      expect(bsv.crypto.Hash.sha256sha256(Buffer.from(metadata_string, 'hex')).toString('hex')).to.eql(expected_hash);
       expect(fromHex.hash()).to.eql(expected_hash);
    });
 
