@@ -17,7 +17,7 @@ describe('boost #BoostPowJob create various getters and setters', () => {
       });
       const jobObj = job.toObject();
       expect(jobObj).to.eql({
-         content: Buffer.from('00000000000000000000000000000000000000000068656c6c6f20776f726c64', 'hex').toString('hex'),
+         content: '68656c6c6f20776f726c64000000000000000000000000000000000000000000',
          diff: 157416.40184364,
          category: "00000000",
          tag: '0000000000000000000000000000000000000000',
@@ -42,7 +42,7 @@ describe('boost #BoostPowJob create various getters and setters', () => {
          diff: 157416.40184364,
       });
       const jobObj = job.toASM();
-      expect(jobObj).to.eql('626f6f7374706f77 OP_DROP 00000000 646c726f77206f6c6c6568000000000000000000000000000000000000000000 b3936a1a 0000000000000000000000000000000000000000 00000000 0000000000000000000000000000000000000000000000000000000000000000 OP_CAT OP_SWAP OP_5 OP_ROLL OP_DUP OP_TOALTSTACK OP_CAT OP_2 OP_PICK OP_TOALTSTACK OP_5 OP_ROLL OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_5 OP_ROLL OP_SIZE OP_8 OP_EQUALVERIFY OP_CAT OP_SWAP OP_CAT OP_HASH256 OP_SWAP OP_TOALTSTACK OP_CAT OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_FROMALTSTACK OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_HASH256 00 OP_CAT OP_BIN2NUM OP_FROMALTSTACK OP_SIZE OP_4 OP_EQUALVERIFY OP_3 OP_SPLIT OP_DUP OP_BIN2NUM OP_3 21 OP_WITHIN OP_VERIFY OP_TOALTSTACK OP_DUP OP_BIN2NUM 0 OP_GREATERTHAN OP_VERIFY 0000000000000000000000000000000000000000000000000000000000 OP_CAT OP_FROMALTSTACK OP_3 OP_SUB OP_8 OP_MUL OP_RSHIFT 00 OP_CAT OP_BIN2NUM OP_LESSTHAN OP_VERIFY OP_DUP OP_HASH160 OP_FROMALTSTACK OP_EQUALVERIFY OP_CHECKSIG');
+      expect(jobObj).to.eql('626f6f7374706f77 OP_DROP 00000000 68656c6c6f20776f726c64000000000000000000000000000000000000000000 b3936a1a 0000000000000000000000000000000000000000 00000000 0000000000000000000000000000000000000000000000000000000000000000 OP_CAT OP_SWAP OP_5 OP_ROLL OP_DUP OP_TOALTSTACK OP_CAT OP_2 OP_PICK OP_TOALTSTACK OP_5 OP_ROLL OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_5 OP_ROLL OP_SIZE OP_8 OP_EQUALVERIFY OP_CAT OP_SWAP OP_CAT OP_HASH256 OP_SWAP OP_TOALTSTACK OP_CAT OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_FROMALTSTACK OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_HASH256 00 OP_CAT OP_BIN2NUM OP_FROMALTSTACK OP_SIZE OP_4 OP_EQUALVERIFY OP_3 OP_SPLIT OP_DUP OP_BIN2NUM OP_3 21 OP_WITHIN OP_VERIFY OP_TOALTSTACK OP_DUP OP_BIN2NUM 0 OP_GREATERTHAN OP_VERIFY 0000000000000000000000000000000000000000000000000000000000 OP_CAT OP_FROMALTSTACK OP_3 OP_SUB OP_8 OP_MUL OP_RSHIFT 00 OP_CAT OP_BIN2NUM OP_LESSTHAN OP_VERIFY OP_DUP OP_HASH160 OP_FROMALTSTACK OP_EQUALVERIFY OP_CHECKSIG');
    });
 
    it('should be valid full', async () => {
@@ -59,23 +59,23 @@ describe('boost #BoostPowJob create various getters and setters', () => {
 
       const jobObj = job.toObject();
       expect(jobObj).to.eql({
-         content: '00000000000000000000000000000000000000000068656c6c6f20776f726c64',
+         content: '68656c6c6f20776f726c64000000000000000000000000000000000000000000',
          diff: 157416.40184364,
-         category: '000004d2',
-         tag: index.BoostUtilsHelper.createBufferAndPad('animals', 20).reverse().toString('hex'),
-         additionalData: index.BoostUtilsHelper.createBufferAndPad('additionalData here', 32).reverse().toString('hex'),
+         category: '04d20000',
+         tag: index.BoostUtilsHelper.createBufferAndPad('animals', 20).toString('hex'),
+         additionalData: index.BoostUtilsHelper.createBufferAndPad('additionalData here', 32).toString('hex'),
          userNonce: '913914e3',
       });
    });
 
    it('should generate output script Hex', async () => {
       const job = index.BoostPowJob.fromObject({
-         content: '00000000000000000000000000000000000000000068656c6c6f20776f726c64',
+         content: '646c726f77206f6c6c6568000000000000000000000000000000000000000000',
          diff: 157416.40184364,
-         category: '00000132',
-         tag: '00000000000000000000000000616e696d616c73',
-         additionalData: '000000000000000000000000006164646974696f6e616c446174612068657265',
-         userNonce: '913914e3',
+         category: '32010000',
+         tag: '736c616d696e6100000000000000000000000000',
+         additionalData: '6572656820617461446c616e6f69746964646100000000000000000000000000',
+         userNonce: 'e3143991',
       });
 
       const outputScript = job.toHex();
@@ -87,12 +87,12 @@ describe('boost #BoostPowJob create various getters and setters', () => {
 
    it('should generate output script toString', async () => {
       const job = index.BoostPowJob.fromObject({
-         content: '00000000000000000000000000000000000000000068656c6c6f20776f726c64',
+         content: '646c726f77206f6c6c6568000000000000000000000000000000000000000000',
          diff: 157416.40184364,
-         category: '0132',
-         tag: '00000000000000000000000000616e696d616c73',
-         additionalData: '000000000000000000000000000000000000006d657461646174612068657265',
-         userNonce: '913914e3',
+         category: '32010000',
+         tag: '736c616d696e6100000000000000000000000000',
+         additionalData: '6572656820617461646174656d00000000000000000000000000000000000000',
+         userNonce: 'e3143991',
       });
 
       const outputScript = job.toString();
@@ -100,12 +100,12 @@ describe('boost #BoostPowJob create various getters and setters', () => {
       expect(jobFromHex.toObject()).to.eql(job.toObject());
 
       expect(jobFromHex.toObject()).to.eql({
-         content: '00000000000000000000000000000000000000000068656c6c6f20776f726c64',
+         content: '646c726f77206f6c6c6568000000000000000000000000000000000000000000',
          diff: 157416.40184364,
-         category: '00000132',
-         tag: '00000000000000000000000000616e696d616c73',
-         additionalData: '000000000000000000000000000000000000006d657461646174612068657265',
-         userNonce: '913914e3',
+         category: '32010000',
+         tag: '736c616d696e6100000000000000000000000000',
+         additionalData: '6572656820617461646174656d00000000000000000000000000000000000000',
+         userNonce: 'e3143991',
       });
 
       expect(outputScript).to.eql('8 0x626f6f7374706f77 OP_DROP 4 0x32010000 32 0x646c726f77206f6c6c6568000000000000000000000000000000000000000000 4 0xb3936a1a 20 0x736c616d696e6100000000000000000000000000 4 0xe3143991 32 0x6572656820617461646174656d00000000000000000000000000000000000000 OP_CAT OP_SWAP OP_5 OP_ROLL OP_DUP OP_TOALTSTACK OP_CAT OP_2 OP_PICK OP_TOALTSTACK OP_5 OP_ROLL OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_5 OP_ROLL OP_SIZE OP_8 OP_EQUALVERIFY OP_CAT OP_SWAP OP_CAT OP_HASH256 OP_SWAP OP_TOALTSTACK OP_CAT OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_FROMALTSTACK OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_HASH256 1 0x00 OP_CAT OP_BIN2NUM OP_FROMALTSTACK OP_SIZE OP_4 OP_EQUALVERIFY OP_3 OP_SPLIT OP_DUP OP_BIN2NUM OP_3 1 0x21 OP_WITHIN OP_VERIFY OP_TOALTSTACK OP_DUP OP_BIN2NUM OP_0 OP_GREATERTHAN OP_VERIFY 29 0x0000000000000000000000000000000000000000000000000000000000 OP_CAT OP_FROMALTSTACK OP_3 OP_SUB OP_8 OP_MUL OP_RSHIFT 1 0x00 OP_CAT OP_BIN2NUM OP_LESSTHAN OP_VERIFY OP_DUP OP_HASH160 OP_FROMALTSTACK OP_EQUALVERIFY OP_CHECKSIG');
@@ -257,20 +257,19 @@ describe('boost #BoostPowString tryValidateJobProof', () => {
      expect(jobObj).to.eql({
         signature: '304402200b6185b913fc852aa282dbd350e19ab8acbc96a6cf6c3fc0ccb4155a39c982c502202a792a1c3c831b41695136c0db0d5717eb501f8580dcbc6c1593de13276738eb41',
         minerPubKeyHash: '0af0c49c7e8c842243913bbea2491027cf4e6bab',
-        extraNonce1: "f5b208b0",
+        extraNonce1: "b008b2f5",
         extraNonce2: "9702000000000000",
         minerPubKey: '02d57db0c7046be47cb88e0e737b3037f7f29ef1c78ca412860eceffa617fee7ef',
-        time: '5f8f76b7',
-        nonce: '88090032',
+        time: 'b7768f5f',
+        nonce: '32000988',
      });
-
-      const result = index.BoostPowJob.tryValidateJobProof(job, jobProof, false);
+ 
+      const result = index.BoostPowJob.tryValidateJobProof(job, jobProof);
       expect(result.boostPowString.toString()).to.eql('000000004bd94af3e76f57ba13d790f02d5ff3ad7dd0451c2a31ecd2cb1fdbb0f3a932330c7e3858267273997f3981b674195bb3b25033264eff57c9aee9f7fca08d2211b7768f5fffff001d32000988');
       expect(result.boostPowString.hash()).to.eql('0000000005fe6ee4cbb33d916681681e01740a6f7e79a862c80f7168c879560b');
-      expect(result.boostPowMetadata.hash()).to.eql('11228da0fcf7e9aec957ff4e263350b2b35b1974b681397f9973722658387e0c');
       expect(result.boostPowMetadata.toString()).to.eql('65636e616e6966230000000000000000000000000af0c49c7e8c842243913bbea2491027cf4e6babb008b2f59702000000000000000000000000000000000000000000000000000000000000000000000000000000000000');
       expect(jobProof.txid).to.eql('6f1060446ad5cf56d2cf75c116be3b6b354cf0c7b3e8da57fb3a9d6b71780ad0');
-      expect(jobObj.time).to.eql('5f8f76b7');
+      expect(jobObj.time).to.eql('b7768f5f');
       expect(
          index.BoostSignal.fromHex(result.boostPowString.toString(), result.boostPowMetadata.toString()).time()).to.eql(1603237559);
       expect(result.boostPowString.metadataHash()).to.eql(result.boostPowMetadata.hash());
@@ -299,7 +298,7 @@ describe('boost #BoostPowString tryValidateJobProof', () => {
          nonce:  Buffer.from('1ca169e0', 'hex').toString('hex'),
          minerPubKeyHash: Buffer.from('9fb8cb68b8850a13c7438e26e1d277b748be657a', 'hex').toString('hex'),
       });
-      const result = index.BoostPowJob.tryValidateJobProof(job, jobProof, false);
+      const result = index.BoostPowJob.tryValidateJobProof(job, jobProof);
       expect(result.boostPowString.hash()).to.eql('0000000000f0e97bec0c369dd6c7cbde0243a351d8ab138778717c63660afa35');
       expect(result.boostPowMetadata.hash()).to.eql('7687b9ef4a2a8bc0387336177e4f90ceabca3cbdf246ad4e9f27d4d94f1f4019');
       expect(result.boostPowString.metadataHash()).to.eql(result.boostPowMetadata.hash());
@@ -407,36 +406,36 @@ describe('BoostPowJob', () => {
 
    it('should correctly get content and buffers as appropriate', async () => {
       const job = index.BoostPowJob.fromObject({
-         content: index.BoostUtilsHelper.createBufferAndPad('hello animal', 32).reverse().toString('hex'),
+         content: index.BoostUtilsHelper.createBufferAndPad('hello animal', 32).toString('hex'),
          diff: 21,
-         category: index.BoostUtilsHelper.createBufferAndPad('bill', 4).reverse().toString('hex'),
-         tag: index.BoostUtilsHelper.createBufferAndPad('this is a tag', 20).reverse().toString('hex'),
-         additionalData: index.BoostUtilsHelper.createBufferAndPad('this is more additionalData', 32).reverse().toString('hex'),
-         userNonce: index.BoostUtilsHelper.createBufferAndPad('01c8', 4).reverse().toString('hex')
+         category: index.BoostUtilsHelper.createBufferAndPad('bill', 4).toString('hex'),
+         tag: index.BoostUtilsHelper.createBufferAndPad('this is a tag', 20).toString('hex'),
+         additionalData: index.BoostUtilsHelper.createBufferAndPad('this is more additionalData', 32).toString('hex'),
+         userNonce: index.BoostUtilsHelper.createBufferAndPad('c8010000', 4).toString('hex')
       });
 
       expect(!!job.getScriptHash()).to.eql(true);
       expect(!!job.getId()).to.eql(true);
       expect(job.getDiff()).to.eql(21);
       expect(job.getUserNonceBuffer().toString('hex')).to.eql('c8010000');
-      expect(job.getUserNonceHex()).to.eql('000001c8');
+      expect(job.getUserNonceHex()).to.eql('c8010000');
       expect(job.getUserNonce()).to.eql(456);
 
       expect(job.getContentString()).to.eql('hello animal');
-      expect(job.getContentBuffer().toString('hex')).to.eql('6c616d696e61206f6c6c65680000000000000000000000000000000000000000');
-      expect(job.getContentHex()).to.eql('000000000000000000000000000000000000000068656c6c6f20616e696d616c');
+      expect(job.getContentBuffer().toString('hex')).to.eql('68656c6c6f20616e696d616c0000000000000000000000000000000000000000');
+      expect(job.getContentHex()).to.eql('68656c6c6f20616e696d616c0000000000000000000000000000000000000000');
 
       expect(job.getTagString()).to.eql('this is a tag');
-      expect(job.getTagBuffer().toString('hex')).to.eql('6761742061207369207369687400000000000000');
-      expect(job.getTagHex()).to.eql('0000000000000074686973206973206120746167');
+      expect(job.getTagBuffer().toString('hex')).to.eql('7468697320697320612074616700000000000000');
+      expect(job.getTagHex()).to.eql('7468697320697320612074616700000000000000');
 
       expect(job.getCategoryString()).to.eql('bill');
-      expect(job.getCategoryBuffer().toString('hex')).to.eql('6c6c6962');
+      expect(job.getCategoryBuffer().toString('hex')).to.eql('62696c6c');
       expect(job.getCategoryHex()).to.eql('62696c6c');
 
       expect(job.getAdditionalDataString()).to.eql('this is more additionalData');
-      expect(job.getAdditionalDataBuffer().toString('hex')).to.eql('617461446c616e6f6974696464612065726f6d20736920736968740000000000');
-      expect(job.getAdditionalDataHex()).to.eql('000000000074686973206973206d6f7265206164646974696f6e616c44617461');
+      expect(job.getAdditionalDataBuffer().toString('hex')).to.eql('74686973206973206d6f7265206164646974696f6e616c446174610000000000');
+      expect(job.getAdditionalDataHex()).to.eql('74686973206973206d6f7265206164646974696f6e616c446174610000000000');
 
    });
 
@@ -504,15 +503,15 @@ describe('BoostPowJob', () => {
 
    it('should correctly get content and buffers as appropriate', async () => {
       const job = index.BoostPowJob.fromObject({
-         content: index.BoostUtilsHelper.createBufferAndPad('hello animal', 32).reverse().toString('hex'),
+         content: index.BoostUtilsHelper.createBufferAndPad('hello animal', 32).toString('hex'),
          diff: 21.00002253,
-         category: index.BoostUtilsHelper.createBufferAndPad('bill', 4).reverse().toString('hex'),
-         tag: index.BoostUtilsHelper.createBufferAndPad('this is a tag', 20).reverse().toString('hex'),
-         additionalData: index.BoostUtilsHelper.createBufferAndPad('this is more additionalData', 32).reverse().toString('hex'),
-         userNonce: index.BoostUtilsHelper.createBufferAndPad('01c8', 4).reverse().toString('hex')
+         category: index.BoostUtilsHelper.createBufferAndPad('bill', 4).toString('hex'),
+         tag: index.BoostUtilsHelper.createBufferAndPad('this is a tag', 20).toString('hex'),
+         additionalData: index.BoostUtilsHelper.createBufferAndPad('this is more additionalData', 32).toString('hex'),
+         userNonce: index.BoostUtilsHelper.createBufferAndPad('01c8', 4).toString('hex')
       });
 
-      expect(job.toString()).to.eql('8 0x626f6f7374706f77 OP_DROP 4 0x6c6c6962 32 0x6c616d696e61206f6c6c65680000000000000000000000000000000000000000 4 0xb6300c1c 20 0x6761742061207369207369687400000000000000 4 0xc8010000 32 0x617461446c616e6f6974696464612065726f6d20736920736968740000000000 OP_CAT OP_SWAP OP_5 OP_ROLL OP_DUP OP_TOALTSTACK OP_CAT OP_2 OP_PICK OP_TOALTSTACK OP_5 OP_ROLL OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_5 OP_ROLL OP_SIZE OP_8 OP_EQUALVERIFY OP_CAT OP_SWAP OP_CAT OP_HASH256 OP_SWAP OP_TOALTSTACK OP_CAT OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_FROMALTSTACK OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_HASH256 1 0x00 OP_CAT OP_BIN2NUM OP_FROMALTSTACK OP_SIZE OP_4 OP_EQUALVERIFY OP_3 OP_SPLIT OP_DUP OP_BIN2NUM OP_3 1 0x21 OP_WITHIN OP_VERIFY OP_TOALTSTACK OP_DUP OP_BIN2NUM OP_0 OP_GREATERTHAN OP_VERIFY 29 0x0000000000000000000000000000000000000000000000000000000000 OP_CAT OP_FROMALTSTACK OP_3 OP_SUB OP_8 OP_MUL OP_RSHIFT 1 0x00 OP_CAT OP_BIN2NUM OP_LESSTHAN OP_VERIFY OP_DUP OP_HASH160 OP_FROMALTSTACK OP_EQUALVERIFY OP_CHECKSIG');
+      expect(job.toString()).to.eql('8 0x626f6f7374706f77 OP_DROP 4 0x62696c6c 32 0x68656c6c6f20616e696d616c0000000000000000000000000000000000000000 4 0xb6300c1c 20 0x7468697320697320612074616700000000000000 4 0x01c80000 32 0x74686973206973206d6f7265206164646974696f6e616c446174610000000000 OP_CAT OP_SWAP OP_5 OP_ROLL OP_DUP OP_TOALTSTACK OP_CAT OP_2 OP_PICK OP_TOALTSTACK OP_5 OP_ROLL OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_5 OP_ROLL OP_SIZE OP_8 OP_EQUALVERIFY OP_CAT OP_SWAP OP_CAT OP_HASH256 OP_SWAP OP_TOALTSTACK OP_CAT OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_FROMALTSTACK OP_CAT OP_SWAP OP_SIZE OP_4 OP_EQUALVERIFY OP_CAT OP_HASH256 1 0x00 OP_CAT OP_BIN2NUM OP_FROMALTSTACK OP_SIZE OP_4 OP_EQUALVERIFY OP_3 OP_SPLIT OP_DUP OP_BIN2NUM OP_3 1 0x21 OP_WITHIN OP_VERIFY OP_TOALTSTACK OP_DUP OP_BIN2NUM OP_0 OP_GREATERTHAN OP_VERIFY 29 0x0000000000000000000000000000000000000000000000000000000000 OP_CAT OP_FROMALTSTACK OP_3 OP_SUB OP_8 OP_MUL OP_RSHIFT 1 0x00 OP_CAT OP_BIN2NUM OP_LESSTHAN OP_VERIFY OP_DUP OP_HASH160 OP_FROMALTSTACK OP_EQUALVERIFY OP_CHECKSIG');
       const str = job.toString();
       expect(job.toObject()).to.eql(index.BoostPowJob.fromString(str).toObject());
    });
@@ -524,14 +523,14 @@ describe('BoostPowJob', () => {
          category: Number(123).toString(16),
          tag: index.BoostUtilsHelper.createBufferAndPad('this is a tag', 20).reverse().toString('hex'),
          additionalData: index.BoostUtilsHelper.createBufferAndPad('this is more additionalData', 32).reverse().toString('hex'),
-         userNonce: index.BoostUtilsHelper.createBufferAndPad('01c8', 4).reverse().toString('hex')
+         userNonce: 'c8010000'
       });
 
       expect(job.getBits()).to.eql(486604799);
       expect(job.getBitsHex()).to.eql('1d00ffff');
       expect(job.getBits().toString(16)).to.eql('1d00ffff');
       expect(job.getCategoryNumber()).to.eql(123);
-      expect(job.getUserNonceNumber()).to.eql(456);
+      expect(job.getUserNonce()).to.eql(456);
 
       job = index.BoostPowJob.fromObject({
          content: index.BoostUtilsHelper.createBufferAndPad('hello animal', 32).reverse().toString('hex'),
@@ -557,7 +556,7 @@ describe('BoostPowJob', () => {
          additionalData: index.BoostUtilsHelper.createBufferAndPad('this is more additionalData', 32).reverse().toString('hex'),
          userNonce: index.BoostUtilsHelper.createBufferAndPad('01c8', 4).reverse().toString('hex')
       });
-      expect(job.getContentHex()).to.eql('35b8fcb6882f93bddb928c9872198bcdf057ab93ed615ad938f24a63abde5881');
+      expect(job.getContentHex()).to.eql('8158deab634af238d95a61ed93ab57f0cd8b1972988c92dbbd932f88b6fcb835');
    });
 
 });

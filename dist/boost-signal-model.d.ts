@@ -19,7 +19,7 @@ export declare class BoostSignalModel {
     time(): number;
     nonce(): number;
     tag(hex?: boolean): string | null;
-    userNonce(hex?: boolean): string | null;
+    userNonce(): string | null;
     additionalData(hex?: boolean): string | null;
     minerPubKeyHash(): string | null;
     toString(): string;

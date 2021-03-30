@@ -39,27 +39,27 @@ export class BoostPowJobProofModel {
         if (params.minerPubKey && params.minerPubKey.length > 66) {
             throw new Error('minerPubKey too large. Max 33 bytes.')
         }
-        if (params.nonce && params.nonce.length > 8) {
-            throw new Error('nonce too large. Max 4 bytes.')
+        if (params.nonce && params.nonce.length != 8) {
+            throw new Error('nonce is 4 bytes.')
         }
-        if (params.extraNonce1 && params.extraNonce1.length > 8) {
-            throw new Error('extraNonce1 too large. Max 4 bytes.')
+        if (params.extraNonce1 && params.extraNonce1.length != 8) {
+            throw new Error('extraNonce1 is 4 bytes.')
         }
-        if (params.extraNonce2 && params.extraNonce2.length > 16) {
-            throw new Error('extraNonce2 too large. Max 8 bytes.')
+        if (params.extraNonce2 && params.extraNonce2.length != 16) {
+            throw new Error('extraNonce2 is 8 bytes.')
         }
-        if (params.minerPubKeyHash && params.minerPubKeyHash.length > 40) {
-            throw new Error('minerPubKeyHash too large. Max 20 bytes.')
+        if (params.minerPubKeyHash && params.minerPubKeyHash.length != 40) {
+            throw new Error('minerPubKeyHash is 20 bytes.')
         }
 
         return new BoostPowJobProofModel(
             Buffer.from(params.signature, 'hex'),
-            BoostUtils.createBufferAndPad(params.minerPubKey, 33, false),
+            BoostUtils.createBufferAndPad(params.minerPubKey, 33),
             BoostUtils.createBufferAndPad(params.time, 4),
             BoostUtils.createBufferAndPad(params.extraNonce1, 4),
-            BoostUtils.createBufferAndPad(params.extraNonce2, 8, false),
+            BoostUtils.createBufferAndPad(params.extraNonce2, 8),
             BoostUtils.createBufferAndPad(params.nonce, 4),
-            BoostUtils.createBufferAndPad(params.minerPubKeyHash, 20, false),
+            BoostUtils.createBufferAndPad(params.minerPubKeyHash, 20),
         );
     }
 
@@ -80,7 +80,7 @@ export class BoostPowJobProofModel {
     }
 
     getExtraNonce1Number(): number {
-        return parseInt((this.extraNonce1.toString('hex').match(/../g) || []).join(''), 16);
+        return parseInt((this.extraNonce1.toString('hex').match(/../g) || []).reverse().join(''), 16);
     }
 
     getExtraNonce1(): Buffer {
@@ -88,7 +88,7 @@ export class BoostPowJobProofModel {
     }
 
     getExtraNonce2Number(): number {
-        return parseInt((this.extraNonce2.toString('hex').match(/../g) || []).reverse().join(''), 16);
+        return parseInt((this.extraNonce2.toString('hex').match(/../g) || []).join(''), 16);
     }
 
     getExtraNonce2(): Buffer {
@@ -161,13 +161,13 @@ export class BoostPowJobProofModel {
     toObject () {
         return {
             // Output to string first, then flip endianness so we do not accidentally modify underlying buffer
-            signature: (this.signature.toString('hex').match(/../g) || []).join(''),
-            minerPubKey: (this.minerPubKey.toString('hex').match(/../g) || []).join(''),
-            time: (this.time.toString('hex').match(/../g) || []).reverse().join(''),
-            nonce: (this.nonce.toString('hex').match(/../g) || []).reverse().join(''),
-            extraNonce1: (this.extraNonce1.toString('hex').match(/../g) || []).reverse().join(''),
-            extraNonce2: (this.extraNonce2.toString('hex').match(/../g) || []).join(''),
-            minerPubKeyHash: (this.minerPubKeyHash.toString('hex').match(/../g) || []).join(''),
+            signature: this.signature.toString('hex'),
+            minerPubKey: this.minerPubKey.toString('hex'),
+            time: this.time.toString('hex'),
+            nonce: this.nonce.toString('hex'),
+            extraNonce1: this.extraNonce1.toString('hex'),
+            extraNonce2: this.extraNonce2.toString('hex'),
+            minerPubKeyHash: this.minerPubKeyHash.toString('hex'),
         };
     }
 
@@ -390,22 +390,10 @@ export class BoostPowJobProofModel {
     // Optional attached information if available
     getSpentVout(): number | undefined {
         return this.spentVout;
-    }
-
-    toASM(): string {
-        const makeHex = this.toHex();
-        const makeAsm = new bsv.Script(makeHex);
-        return makeAsm.toASM();
-    }
+    }     
 
     static fromASM2(str: string, txid?: string, vin?: number): BoostPowJobProofModel {
         return BoostPowJobProofModel.fromHex(str, txid, vin);
-    }
-
-    toString(): string {
-        const makeHex = this.toHex();
-        const makeAsm = new bsv.Script(makeHex);
-        return makeAsm.toString();
     }
 
     toBuffer(): string {

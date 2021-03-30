@@ -31,7 +31,6 @@ export declare class BoostPowJobModel {
     getAdditionalDataHex(): string;
     getAdditionalDataBuffer(): Buffer;
     getUserNonce(): number;
-    getUserNonceNumber(): number;
     getUserNonceBuffer(): Buffer;
     getUserNonceHex(): string;
     static fromObject(params: {
@@ -103,9 +102,9 @@ export declare class BoostPowJobModel {
      */
     static createRedeemTransaction(boostPowJob: BoostPowJobModel, boostPowJobProof: BoostPowJobProofModel, privateKeyStr: string, receiveAddressStr: string): bsv.Transaction | null;
     static createBoostPowMetadata(boostPowJob: BoostPowJobModel, boostPowJobProof: BoostPowJobProofModel): BoostPowMetadataModel;
-    static tryValidateJobProof(boostPowJob: BoostPowJobModel, boostPowJobProof: BoostPowJobProofModel, debug?: boolean): null | {
-        boostPowString: BoostPowStringModel | null;
-        boostPowMetadata: BoostPowMetadataModel | null;
+    static tryValidateJobProof(boostPowJob: BoostPowJobModel, boostPowJobProof: BoostPowJobProofModel): null | {
+        boostPowString: BoostPowStringModel;
+        boostPowMetadata: BoostPowMetadataModel;
     };
     static loopOperation(loopIterations: number, generateFragmentInvoker: Function): never[];
     static scriptOperations(useGeneralPurposeBits: boolean): any[];

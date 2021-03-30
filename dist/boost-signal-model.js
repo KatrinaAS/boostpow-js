@@ -78,14 +78,11 @@ class BoostSignalModel {
         }
         return this.boostPowMetadata.getTagUtf8();
     }
-    userNonce(hex) {
+    userNonce() {
         if (!this.boostPowMetadata) {
             return null;
         }
-        if (hex) {
-            return this.boostPowMetadata.getUserNonce().toString('hex');
-        }
-        return this.boostPowMetadata.getUserNonceUtf8();
+        return this.boostPowMetadata.getUserNonce().toString('hex');
     }
     additionalData(hex) {
         if (!this.boostPowMetadata) {

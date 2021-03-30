@@ -36,7 +36,7 @@
         return Buffer.from(i.toString(16), 'hex').reverse();
     }
 
-    static createBufferAndPad(buf: any, length: number, reverse = true): any {
+    static createBufferAndPad(buf: any, length: number): any {
         if (!buf) {
             const emptyBuffer = new Buffer(length);
             emptyBuffer.fill(0);
@@ -63,9 +63,9 @@
         if (paddedBuf.byteLength < length) {
             const emptyBuffer = new Buffer(length - paddedBuf.byteLength);
             emptyBuffer.fill(0);
-            return reverse ? Buffer.concat([emptyBuffer, paddedBuf]).reverse() : Buffer.concat([emptyBuffer, paddedBuf]).reverse();
+            return Buffer.concat([paddedBuf, emptyBuffer]);
         } else {
-            return reverse ? paddedBuf.reverse() : paddedBuf;
+            return paddedBuf;
         }
     }
 }

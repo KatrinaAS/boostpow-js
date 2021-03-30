@@ -75,9 +75,7 @@ export declare class BoostPowJobProofModel {
     getVin(): number | undefined;
     getSpentTxid(): string | undefined;
     getSpentVout(): number | undefined;
-    toASM(): string;
     static fromASM2(str: string, txid?: string, vin?: number): BoostPowJobProofModel;
-    toString(): string;
     toBuffer(): string;
     static fromString(str: string, txid?: string, vin?: number): BoostPowJobProofModel;
 }

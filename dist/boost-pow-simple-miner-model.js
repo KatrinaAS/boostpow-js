@@ -16,7 +16,7 @@ class BoostPowSimpleMinerModel {
             jobProof.setExtraNonce1(cryptoRandomString({ length: 8 }));
             jobProof.setExtraNonce2(cryptoRandomString({ length: 8 }));
             jobProof.setTime(Math.round((new Date()).getTime() / 1000).toString(16));
-            boostPowString = boost_pow_job_model_1.BoostPowJobModel.tryValidateJobProof(job, jobProof, debugLevel == 2 ? true : false);
+            boostPowString = boost_pow_job_model_1.BoostPowJobModel.tryValidateJobProof(job, jobProof);
             if (counter++ % 500000 === 0) {
                 if (debugLevel >= 1) {
                     console.log('Hashes checked: ', counter);

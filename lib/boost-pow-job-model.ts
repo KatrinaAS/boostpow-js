@@ -38,7 +38,7 @@ export class BoostPowJobModel {
     }
 
     getContentHex(): string {
-        return (this.content.toString('hex').match(/../g) || []).reverse().join('');
+        return this.content.toString('hex');
     }
 
     getDiff(): number {
@@ -50,11 +50,11 @@ export class BoostPowJobModel {
     }
 
     getCategoryNumber(): number {
-        return parseInt(this.getCategoryHex(), 16);
+        return this.category.readInt32LE();
     }
 
     getCategoryHex(): string {
-        return (this.category.toString('hex').match(/../g) || []).reverse().join('');
+        return this.category.toString('hex');
     }
 
     getCategoryString(trimLeadingNulls = true): string {
@@ -66,7 +66,7 @@ export class BoostPowJobModel {
     }
 
     getTagHex(): string {
-        return (this.tag.toString('hex').match(/../g) || []).reverse().join('');
+        return this.tag.toString('hex');
     }
 
     getTagBuffer(): Buffer {
@@ -78,7 +78,7 @@ export class BoostPowJobModel {
     }
 
     getAdditionalDataHex(): string {
-        return (this.additionalData.toString('hex').match(/../g) || []).reverse().join('');
+        return this.additionalData.toString('hex')
     }
 
     getAdditionalDataBuffer(): Buffer {
@@ -86,11 +86,7 @@ export class BoostPowJobModel {
     }
 
     getUserNonce(): number {
-        return parseInt(this.toObject().userNonce, 16);
-    }
-
-    getUserNonceNumber(): number {
-        return parseInt(this.getUserNonceHex(), 16);
+        return this.userNonce.readInt32LE();
     }
 
     getUserNonceBuffer(): Buffer {
@@ -98,7 +94,7 @@ export class BoostPowJobModel {
     }
 
     getUserNonceHex(): string {
-        return (this.userNonce.toString('hex').match(/../g) || []).reverse().join('');
+        return this.userNonce.toString('hex');
     }
 
     static fromObject(params: {
@@ -159,12 +155,12 @@ export class BoostPowJobModel {
 
     toObject () {
         return {
-            content: (this.content.toString('hex').match(/../g) || []).reverse().join(''),
+            content: this.content.toString('hex'),
             diff: this.difficulty,
-            category: (this.category.toString('hex').match(/../g) || []).reverse().join(''),
-            tag: (this.tag.toString('hex').match(/../g) || []).reverse().join(''),
-            additionalData: (this.additionalData.toString('hex').match(/../g) || []).reverse().join(''),
-            userNonce: (this.userNonce.toString('hex').match(/../g) || []).reverse().join(''),
+            category: this.category.toString('hex'),
+            tag: this.tag.toString('hex'),
+            additionalData: this.additionalData.toString('hex'),
+            userNonce: this.userNonce.toString('hex'),
         };
     }
 
@@ -365,12 +361,9 @@ export class BoostPowJobModel {
             diff = BoostPowJobModel.getDifficulty(targetInt);
 
             tag = script.chunks[5].buf;
-            //tag = (script.chunks[5].buf.toString('hex').match(/../g) || []).reverse().join('');
 
             userNonce = script.chunks[6].buf;
-            //userNonce = (script.chunks[6].buf.toString('hex').match(/../g) || []).reverse().join('');
             additionalData = script.chunks[7].buf;
-            //additionalData = (script.chunks[7].buf.toString('hex').match(/../g) || []).reverse().join('');
 
             return new BoostPowJobModel(
                 content,
@@ -562,43 +555,44 @@ export class BoostPowJobModel {
         });
     }
 
-    static tryValidateJobProof(boostPowJob: BoostPowJobModel, boostPowJobProof: BoostPowJobProofModel, debug: boolean = false): null | { boostPowString: BoostPowStringModel | null, boostPowMetadata: BoostPowMetadataModel | null } {
+    static tryValidateJobProof(boostPowJob: BoostPowJobModel, boostPowJobProof: BoostPowJobProofModel): null | { boostPowString: BoostPowStringModel, boostPowMetadata: BoostPowMetadataModel} {
+        
         const boostPowMetadataCoinbaseString = BoostPowJobModel.createBoostPowMetadata(boostPowJob, boostPowJobProof);
-        if (debug) {
-            console.log('BoostPowString.tryValidateJobProof')
-            console.log('category', boostPowJob.getCategoryBuffer().toString('hex'), boostPowJob.getCategoryBuffer().byteLength);
-            console.log('content', boostPowJob.getContentBuffer().toString('hex'), boostPowJob.getContentBuffer().byteLength);
-            console.log('boostPowMetadataCoinbaseString', boostPowMetadataCoinbaseString.toBuffer().reverse().toString('hex'), boostPowMetadataCoinbaseString, boostPowMetadataCoinbaseString.hash());
-            console.log('time', boostPowJobProof.getTime().toString('hex'), boostPowJobProof.getTime().byteLength);
-            console.log('target', boostPowJob.getTargetAsNumberBuffer().toString('hex'), boostPowJob.getTargetAsNumberBuffer().byteLength);
-            console.log('nonce', boostPowJobProof.getNonce().toString('hex'), boostPowJobProof.getNonce().byteLength)
-            console.log('userNonce', boostPowJob.getUserNonceBuffer().toString('hex'), boostPowJob.getUserNonceBuffer().byteLength);
-        }
+
+        console.log('BoostPowString.tryValidateJobProof')
+        console.log('category', boostPowJob.getCategoryBuffer().toString('hex'), boostPowJob.getCategoryBuffer().byteLength);
+        console.log('content', boostPowJob.getContentBuffer().toString('hex'), boostPowJob.getContentBuffer().byteLength);
+        console.log('boostPowMetadataCoinbaseString', boostPowMetadataCoinbaseString.toBuffer().toString('hex'), boostPowMetadataCoinbaseString, boostPowMetadataCoinbaseString.hash());
+        console.log('time', boostPowJobProof.getTime().toString('hex'), boostPowJobProof.getTime().byteLength);
+        console.log('target', boostPowJob.getTargetAsNumberBuffer().toString('hex'), boostPowJob.getTargetAsNumberBuffer().byteLength);
+        console.log('nonce', boostPowJobProof.getNonce().toString('hex'), boostPowJobProof.getNonce().byteLength)
+        console.log('userNonce', boostPowJob.getUserNonceBuffer().toString('hex'), boostPowJob.getUserNonceBuffer().byteLength);
 
         const headerBuf = Buffer.concat([
             boostPowJob.getCategoryBuffer(),
             boostPowJob.getContentBuffer(),
-            boostPowMetadataCoinbaseString.hashAsBuffer().reverse(),
+            boostPowMetadataCoinbaseString.hashAsBuffer(),
             boostPowJobProof.getTime(),
             boostPowJob.getTargetAsNumberBuffer(),
             boostPowJobProof.getNonce(),
         ]);
+
         const blockHeader = bsv.BlockHeader.fromBuffer(headerBuf);
-        if (debug) {
-            console.log('boostHeader candidate', headerBuf.toString('hex'), blockHeader);
-        }
+        
+        console.log('boostHeader candidate', headerBuf.toString('hex'), blockHeader);
+        
         if (blockHeader.validProofOfWork()) {
-            if (debug) {
-                console.log('BoostPowString.tryValidateJobProof is valid')
-            }
+            
+            console.log('BoostPowString.tryValidateJobProof is valid')
+            
             return {
                 boostPowString: new BoostPowStringModel(blockHeader),
                 boostPowMetadata: boostPowMetadataCoinbaseString,
             }
         }
-        if (debug) {
-            console.log('BoostPowString.tryValidateJobProof is invalid')
-        }
+        
+        console.log('BoostPowString.tryValidateJobProof is invalid')
+        
         return null;
     }
     static loopOperation(loopIterations: number, generateFragmentInvoker: Function) {

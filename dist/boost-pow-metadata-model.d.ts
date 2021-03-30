@@ -29,7 +29,6 @@ export declare class BoostPowMetadataModel {
     getMinerPubKeyHash(): Buffer;
     getMinerPubKeyHashUtf8(): string;
     getUserNonce(): Buffer;
-    getUserNonceUtf8(): string;
     getExtraNonce1(): Buffer;
     getExtraNonce2(): Buffer;
     getAdditionalData(): Buffer;

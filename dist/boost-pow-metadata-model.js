@@ -13,7 +13,7 @@ class BoostPowMetadataModel {
         this.additionalData = additionalData;
     }
     static fromObject(params) {
-        return new BoostPowMetadataModel(boost_utils_1.BoostUtils.createBufferAndPad(params.tag, 20), boost_utils_1.BoostUtils.createBufferAndPad(params.minerPubKeyHash, 20), boost_utils_1.BoostUtils.createBufferAndPad(params.extraNonce1, 4), boost_utils_1.BoostUtils.createBufferAndPad(params.extraNonce2, 4), boost_utils_1.BoostUtils.createBufferAndPad(params.userNonce, 4), boost_utils_1.BoostUtils.createBufferAndPad(params.additionalData, 32));
+        return new BoostPowMetadataModel(boost_utils_1.BoostUtils.createBufferAndPad(params.tag, 20), boost_utils_1.BoostUtils.createBufferAndPad(params.minerPubKeyHash, 20), boost_utils_1.BoostUtils.createBufferAndPad(params.extraNonce1, 4), boost_utils_1.BoostUtils.createBufferAndPad(params.extraNonce2, 8), boost_utils_1.BoostUtils.createBufferAndPad(params.userNonce, 4), Buffer.from(params.additionalData, "hex"));
     }
     static fromBuffer(params) {
         return new BoostPowMetadataModel(params.tag, params.minerPubKeyHash, params.extraNonce1, params.extraNonce2, params.userNonce, params.additionalData);
@@ -31,7 +31,7 @@ class BoostPowMetadataModel {
         return this.tag;
     }
     getTagUtf8() {
-        return this.trimBufferString(this.tag.reverse().toString('hex'), true);
+        return this.trimBufferString(this.tag.toString('hex'), true);
     }
     getMinerPubKeyHash() {
         return this.minerPubKeyHash;
@@ -41,9 +41,6 @@ class BoostPowMetadataModel {
     }
     getUserNonce() {
         return this.userNonce;
-    }
-    getUserNonceUtf8() {
-        return this.trimBufferString(this.userNonce.reverse().toString('hex'), true);
     }
     getExtraNonce1() {
         return this.extraNonce1;
@@ -55,7 +52,7 @@ class BoostPowMetadataModel {
         return this.additionalData;
     }
     getAdditionalDataUtf8() {
-        return this.trimBufferString(this.additionalData.reverse().toString('hex'), true);
+        return this.trimBufferString(this.additionalData.toString('hex'), true);
     }
     toString() {
         return Buffer.concat([
@@ -71,19 +68,19 @@ class BoostPowMetadataModel {
         return this.toString();
     }
     hash() {
-        return bsv.crypto.Hash.sha256sha256(this.toBuffer()).reverse().toString('hex');
+        return bsv.crypto.Hash.sha256sha256(this.toBuffer()).toString('hex');
     }
     hashAsBuffer() {
-        return bsv.crypto.Hash.sha256sha256(this.toBuffer()).reverse();
+        return bsv.crypto.Hash.sha256sha256(this.toBuffer());
     }
     toObject() {
         return {
-            tag: (this.tag.toString('hex').match(/../g) || []).reverse().join(''),
-            minerPubKeyHash: (this.minerPubKeyHash.toString('hex').match(/../g) || []).reverse().join(''),
-            extraNonce1: (this.extraNonce1.toString('hex').match(/../g) || []).reverse().join(''),
-            extraNonce2: (this.extraNonce2.toString('hex').match(/../g) || []).reverse().join(''),
-            userNonce: (this.userNonce.toString('hex').match(/../g) || []).reverse().join(''),
-            additionalData: (this.additionalData.toString('hex').match(/../g) || []).reverse().join(''),
+            tag: this.tag.toString('hex'),
+            minerPubKeyHash: this.minerPubKeyHash.toString('hex'),
+            extraNonce1: this.extraNonce1.toString('hex'),
+            extraNonce2: this.extraNonce2.toString('hex'),
+            userNonce: this.userNonce.toString('hex'),
+            additionalData: this.additionalData.toString('hex'),
         };
     }
     toBuffer() {
@@ -103,7 +100,7 @@ class BoostPowMetadataModel {
         return BoostPowMetadataModel.fromHex(str);
     }
     static fromHex(str) {
-        return new BoostPowMetadataModel(Buffer.from(str.substr(0, 40), 'hex'), Buffer.from(str.substr(40, 40), 'hex'), Buffer.from(str.substr(80, 8), 'hex'), Buffer.from(str.substr(88, 8), 'hex'), Buffer.from(str.substr(96, 8), 'hex'), Buffer.from(str.substr(104), 'hex'));
+        return new BoostPowMetadataModel(Buffer.from(str.substr(0, 40), 'hex'), Buffer.from(str.substr(40, 40), 'hex'), Buffer.from(str.substr(80, 8), 'hex'), Buffer.from(str.substr(88, 16), 'hex'), Buffer.from(str.substr(104, 8), 'hex'), Buffer.from(str.substr(112), 'hex'));
     }
 }
 exports.BoostPowMetadataModel = BoostPowMetadataModel;

@@ -79,14 +79,11 @@ export class BoostSignalModel {
         return this.boostPowMetadata.getTagUtf8();
     }
 
-    public userNonce(hex?: boolean): string | null {
+    public userNonce(): string | null {
         if (!this.boostPowMetadata) {
             return null;
         }
-        if (hex) {
-            return this.boostPowMetadata.getUserNonce().toString('hex');
-        }
-        return this.boostPowMetadata.getUserNonceUtf8();
+        return this.boostPowMetadata.getUserNonce().toString('hex');
     }
 
     public additionalData(hex?: boolean): string | null {

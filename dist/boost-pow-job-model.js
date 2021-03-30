@@ -36,7 +36,7 @@ class BoostPowJobModel {
         return this.trimBufferString(this.toObject().content, trimLeadingNulls);
     }
     getContentHex() {
-        return (this.content.toString('hex').match(/../g) || []).reverse().join('');
+        return this.content.toString('hex');
     }
     getDiff() {
         return this.difficulty;
@@ -45,10 +45,10 @@ class BoostPowJobModel {
         return this.category;
     }
     getCategoryNumber() {
-        return parseInt(this.getCategoryHex(), 16);
+        return this.category.readInt32LE();
     }
     getCategoryHex() {
-        return (this.category.toString('hex').match(/../g) || []).reverse().join('');
+        return this.category.toString('hex');
     }
     getCategoryString(trimLeadingNulls = true) {
         return this.trimBufferString(this.toObject().category, trimLeadingNulls);
@@ -57,7 +57,7 @@ class BoostPowJobModel {
         return this.trimBufferString(this.toObject().tag, trimLeadingNulls);
     }
     getTagHex() {
-        return (this.tag.toString('hex').match(/../g) || []).reverse().join('');
+        return this.tag.toString('hex');
     }
     getTagBuffer() {
         return this.tag;
@@ -66,22 +66,19 @@ class BoostPowJobModel {
         return this.trimBufferString(this.toObject().additionalData, trimLeadingNulls);
     }
     getAdditionalDataHex() {
-        return (this.additionalData.toString('hex').match(/../g) || []).reverse().join('');
+        return this.additionalData.toString('hex');
     }
     getAdditionalDataBuffer() {
         return this.additionalData;
     }
     getUserNonce() {
-        return parseInt(this.toObject().userNonce, 16);
-    }
-    getUserNonceNumber() {
-        return parseInt(this.getUserNonceHex(), 16);
+        return this.userNonce.readInt32LE();
     }
     getUserNonceBuffer() {
         return this.userNonce;
     }
     getUserNonceHex() {
-        return (this.userNonce.toString('hex').match(/../g) || []).reverse().join('');
+        return this.userNonce.toString('hex');
     }
     static fromObject(params) {
         if (params.content && params.content.length > 64) {
@@ -120,12 +117,12 @@ class BoostPowJobModel {
     }
     toObject() {
         return {
-            content: (this.content.toString('hex').match(/../g) || []).reverse().join(''),
+            content: this.content.toString('hex'),
             diff: this.difficulty,
-            category: (this.category.toString('hex').match(/../g) || []).reverse().join(''),
-            tag: (this.tag.toString('hex').match(/../g) || []).reverse().join(''),
-            additionalData: (this.additionalData.toString('hex').match(/../g) || []).reverse().join(''),
-            userNonce: (this.userNonce.toString('hex').match(/../g) || []).reverse().join(''),
+            category: this.category.toString('hex'),
+            tag: this.tag.toString('hex'),
+            additionalData: this.additionalData.toString('hex'),
+            userNonce: this.userNonce.toString('hex'),
         };
     }
     static difficulty2bits(difficulty) {
@@ -280,8 +277,7 @@ class BoostPowJobModel {
             script.chunks[6].buf &&
             script.chunks[6].len === 4 &&
             // Additional Data
-            script.chunks[7].buf &&
-            script.chunks[7].len === 32) {
+            script.chunks[7].buf) {
             if (BoostPowJobModel.remainingOperationsMatchExactly(script.chunks, 8, BoostPowJobModel.scriptOperationsV1NoASICBoost())) {
                 useGeneralPurposeBits = false;
             }
@@ -296,11 +292,8 @@ class BoostPowJobModel {
             let targetInt = parseInt(targetHex, 16);
             diff = BoostPowJobModel.getDifficulty(targetInt);
             tag = script.chunks[5].buf;
-            //tag = (script.chunks[5].buf.toString('hex').match(/../g) || []).reverse().join('');
             userNonce = script.chunks[6].buf;
-            //userNonce = (script.chunks[6].buf.toString('hex').match(/../g) || []).reverse().join('');
             additionalData = script.chunks[7].buf;
-            //additionalData = (script.chunks[7].buf.toString('hex').match(/../g) || []).reverse().join('');
             return new BoostPowJobModel(content, diff, category, tag, additionalData, userNonce, useGeneralPurposeBits, txid, vout, value);
         }
         throw new Error('Not valid Boost Output');
@@ -452,42 +445,34 @@ class BoostPowJobModel {
             additionalData: boostPowJob.getAdditionalDataBuffer(),
         });
     }
-    static tryValidateJobProof(boostPowJob, boostPowJobProof, debug = false) {
+    static tryValidateJobProof(boostPowJob, boostPowJobProof) {
         const boostPowMetadataCoinbaseString = BoostPowJobModel.createBoostPowMetadata(boostPowJob, boostPowJobProof);
-        if (debug) {
-            console.log('BoostPowString.tryValidateJobProof');
-            console.log('category', boostPowJob.getCategoryBuffer().toString('hex'), boostPowJob.getCategoryBuffer().byteLength);
-            console.log('content', boostPowJob.getContentBuffer().toString('hex'), boostPowJob.getContentBuffer().byteLength);
-            console.log('boostPowMetadataCoinbaseString', boostPowMetadataCoinbaseString.toBuffer().reverse().toString('hex'), boostPowMetadataCoinbaseString, boostPowMetadataCoinbaseString.hash());
-            console.log('time', boostPowJobProof.getTime().toString('hex'), boostPowJobProof.getTime().byteLength);
-            console.log('target', boostPowJob.getTargetAsNumberBuffer().toString('hex'), boostPowJob.getTargetAsNumberBuffer().byteLength);
-            console.log('nonce', boostPowJobProof.getNonce().toString('hex'), boostPowJobProof.getNonce().byteLength);
-            console.log('userNonce', boostPowJob.getUserNonceBuffer().toString('hex'), boostPowJob.getUserNonceBuffer().byteLength);
-        }
+        console.log('BoostPowString.tryValidateJobProof');
+        console.log('category', boostPowJob.getCategoryBuffer().toString('hex'), boostPowJob.getCategoryBuffer().byteLength);
+        console.log('content', boostPowJob.getContentBuffer().toString('hex'), boostPowJob.getContentBuffer().byteLength);
+        console.log('boostPowMetadataCoinbaseString', boostPowMetadataCoinbaseString.toBuffer().toString('hex'), boostPowMetadataCoinbaseString, boostPowMetadataCoinbaseString.hash());
+        console.log('time', boostPowJobProof.getTime().toString('hex'), boostPowJobProof.getTime().byteLength);
+        console.log('target', boostPowJob.getTargetAsNumberBuffer().toString('hex'), boostPowJob.getTargetAsNumberBuffer().byteLength);
+        console.log('nonce', boostPowJobProof.getNonce().toString('hex'), boostPowJobProof.getNonce().byteLength);
+        console.log('userNonce', boostPowJob.getUserNonceBuffer().toString('hex'), boostPowJob.getUserNonceBuffer().byteLength);
         const headerBuf = Buffer.concat([
             boostPowJob.getCategoryBuffer(),
             boostPowJob.getContentBuffer(),
-            boostPowMetadataCoinbaseString.hashAsBuffer().reverse(),
+            boostPowMetadataCoinbaseString.hashAsBuffer(),
             boostPowJobProof.getTime(),
             boostPowJob.getTargetAsNumberBuffer(),
             boostPowJobProof.getNonce(),
         ]);
         const blockHeader = bsv.BlockHeader.fromBuffer(headerBuf);
-        if (debug) {
-            console.log('boostHeader candidate', headerBuf.toString('hex'), blockHeader);
-        }
+        console.log('boostHeader candidate', headerBuf.toString('hex'), blockHeader);
         if (blockHeader.validProofOfWork()) {
-            if (debug) {
-                console.log('BoostPowString.tryValidateJobProof is valid');
-            }
+            console.log('BoostPowString.tryValidateJobProof is valid');
             return {
                 boostPowString: new boost_pow_string_model_1.BoostPowStringModel(blockHeader),
                 boostPowMetadata: boostPowMetadataCoinbaseString,
             };
         }
-        if (debug) {
-            console.log('BoostPowString.tryValidateJobProof is invalid');
-        }
+        console.log('BoostPowString.tryValidateJobProof is invalid');
         return null;
     }
     static loopOperation(loopIterations, generateFragmentInvoker) {
