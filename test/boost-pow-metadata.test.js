@@ -51,8 +51,12 @@ describe('boost #BoostPowMetadata tests', () => {
    });
 
    it('should success create and get hash of abstract', async () => {
-      const fromHex = index.BoostPowMetadata.fromHex('0100000000000000000000000000000000000000a4000000000000000000000000000000000000004e010000a0210000010000004200000000000000000000000000000000000000000000000000000000000000');
-      expect(fromHex.hash()).to.eql('2dd2ce3a9bd404105a56433e1e0ce8cfa458e0a3669ce45f56132fc23d18a125');
+      const metadata_string = '0100000000000000000000000000000000000000a4000000000000000000000000000000000000004e010000a0210000010000004200000000000000000000000000000000000000000000000000000000000000';
+      const fromHex = index.BoostPowMetadata.fromHex(metadata_string);
+
+      const expected_hash = '2dd2ce3a9bd404105a56433e1e0ce8cfa458e0a3669ce45f56132fc23d18a125';
+      expect(bsv.crypto.Hash.sha256sha256(metadata_string).toString('hex')).to.eql(expected_hash)
+      expect(fromHex.hash()).to.eql(expected_hash);
    });
 
 });
@@ -103,13 +107,13 @@ describe('boost #BoostPowJob createBoostPowMetadata', () => {
          "time": timeHex,
       });
 
-      expect(index.BoostPowJob.createBoostPowMetadata(job, jobProof).toBuffer().toString('hex'))
-      .to.eql('231200000000000000000000000000000000000092e4d5ab4bb067f872d28f44d3e5433e56fca190460000050000000000000000886600009400000000000000000000000000000000000000000000000000000000000000');
+      const expected_metadata = '231200000000000000000000000000000000000092e4d5ab4bb067f872d28f44d3e5433e56fca190460000050000000000000000886600009400000000000000000000000000000000000000000000000000000000000000';
 
-      const expectedMerkleRootMetaHash = 'fc6bee7b4b3be794c6f2a9a9e04786ec8ccedf118b31e3739e919e4e2841c484';
+      expect(index.BoostPowJob.createBoostPowMetadata(job, jobProof).toBuffer().toString('hex')).to.eql(expected_metadata);
+
+      const expectedMerkleRootMetaHash = '84c441284e9e919e73e3318b11dfce8cec8647e0a9a9f2c694e73b4b7bee6bfc';
       expect(bsv.crypto.Hash.sha256sha256(
-         index.BoostPowJob.createBoostPowMetadata(job, jobProof).toBuffer())
-         .reverse().toString('hex'))
+         index.BoostPowJob.createBoostPowMetadata(job, jobProof).toBuffer()).toString('hex'))
       .to.eql(expectedMerkleRootMetaHash);
 
       expect(index.BoostPowJob.createBoostPowMetadata(job, jobProof).hash()).to.eql(expectedMerkleRootMetaHash);
@@ -133,7 +137,7 @@ describe('boost #BoostPowJob createBoostPowMetadata', () => {
       Mar 29 05:15:52 ip-172-31-47-53 sserverboost[15138]: I0329 05:15:52.474145 15176 StratumServerBitcoinBoost.cc:788] 1
       Mar 29 05:15:52 ip-172-31-47-53 sserverboost[15138]: I0329 05:15:52.474159 15176 StratumServerBitcoinBoost.cc:799] { "extraNonce1": 1174405125, "extraNonce2": "0000000000000000", "time": 1585458905, "nonce": 3799195360, "txid": "600834a5c14436aa1b369cf9780994f988a7f0bb30e9e4e0bc6dedc1598e8ede", "vout": 1 }
  */
-      const powString = index.BoostPowJob.tryValidateJobProof(job, jobProof, true);
+      const powString = index.BoostPowJob.tryValidateJobProof(job, jobProof);
 
       expect(powString.boostPowString.hash()).to.eql('00000000f3a3ce33b86e99236e561d8e641ad62f13277a77abef50a6673e9330');
       const powMetadata = index.BoostPowJob.createBoostPowMetadata(job, jobProof);

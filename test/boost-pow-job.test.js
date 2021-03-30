@@ -272,7 +272,7 @@ describe('boost #BoostPowString tryValidateJobProof', () => {
       expect(jobObj.time).to.eql('b7768f5f');
       expect(
          index.BoostSignal.fromHex(result.boostPowString.toString(), result.boostPowMetadata.toString()).time()).to.eql(1603237559);
-      expect(result.boostPowString.metadataHash()).to.eql(result.boostPowMetadata.hash());
+      expect(Buffer.from(result.boostPowString.metadataHash(), "hex").reverse().toString("hex")).to.eql(result.boostPowMetadata.hash());
    });
 
    it('tryValidateJobProof success valid pow mined', async () => {
