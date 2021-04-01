@@ -497,11 +497,13 @@ export class BoostPowJobModel {
         if (!boostPowString) {
             throw new Error('createRedeemTransaction: Invalid Job Proof');
         }
+
         if (!boostPowJob.getTxid() ||
             (boostPowJob.getVout() === undefined ||  boostPowJob.getVout() === null ) ||
             !boostPowJob.getValue()) {
             throw new Error('createRedeemTransaction: Boost Pow Job requires txid, vout, and value');
         }
+
         let tx = new bsv.Transaction();
         tx.addInput(
           new bsv.Transaction.Input({
@@ -514,6 +516,7 @@ export class BoostPowJobModel {
             script: bsv.Script.empty()
           })
         );
+        
         const privKey = new bsv.PrivateKey(privateKeyStr);
         const sigtype = bsv.crypto.Signature.SIGHASH_ALL | bsv.crypto.Signature.SIGHASH_FORKID;
         const flags = bsv.Script.Interpreter.SCRIPT_VERIFY_MINIMALDATA | bsv.Script.Interpreter.SCRIPT_ENABLE_SIGHASH_FORKID | bsv.Script.Interpreter.SCRIPT_ENABLE_MAGNETIC_OPCODES | bsv.Script.Interpreter.SCRIPT_ENABLE_MONOLITH_OPCODES;

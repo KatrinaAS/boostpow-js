@@ -48,7 +48,7 @@ class BoostPowJobProofModel {
         return this.time;
     }
     getTimeNumber() {
-        return parseInt((this.time.toString('hex').match(/../g) || []).reverse().join(''), 16);
+        return this.time.readInt32LE();
     }
     getTimeBuffer() {
         return this.time;
@@ -57,31 +57,31 @@ class BoostPowJobProofModel {
         this.time = boost_utils_1.BoostUtils.createBufferAndPad(time, 4);
     }
     getExtraNonce1Number() {
-        return parseInt((this.extraNonce1.toString('hex').match(/../g) || []).reverse().join(''), 16);
+        return this.extraNonce1.readInt32LE();
     }
     getExtraNonce1() {
         return this.extraNonce1;
     }
     getExtraNonce2Number() {
-        return parseInt((this.extraNonce2.toString('hex').match(/../g) || []).join(''), 16);
+        return this.extraNonce2.readBigInt64BE();
     }
     getExtraNonce2() {
         return this.extraNonce2;
     }
     getNonceNumber() {
-        return parseInt((this.nonce.toString('hex').match(/../g) || []).reverse().join(''), 16);
+        return this.nonce.readInt32LE();
     }
     getNonce() {
         return this.nonce;
     }
     setNonce(nonce) {
-        this.nonce = boost_utils_1.BoostUtils.createBufferAndPad(nonce, 4);
+        this.nonce.writeInt32LE(nonce);
     }
     setExtraNonce1(nonce) {
         this.extraNonce1 = boost_utils_1.BoostUtils.createBufferAndPad(nonce, 4);
     }
     setExtraNonce2(nonce) {
-        this.extraNonce2 = boost_utils_1.BoostUtils.createBufferAndPad(nonce, 8);
+        this.extraNonce2.writeBigInt64BE(nonce);
     }
     // Should add bsv.Address version and string version too
     getMinerPubKeyHash() {
@@ -203,13 +203,13 @@ class BoostPowJobProofModel {
             // minerPubKey
             script.chunks[1].len &&
             // nonce
-            script.chunks[2].len &&
+            script.chunks[2].buf && script.chunks[2].len == 4 &&
             // time
-            script.chunks[3].len &&
+            script.chunks[3].buf && script.chunks[3].len == 4 &&
             // extra Nonce 2
-            script.chunks[4].len &&
+            script.chunks[4].buf && script.chunks[4].len == 8 &&
             // extra Nonce 1
-            script.chunks[5].len &&
+            script.chunks[5].buf && script.chunks[5].len == 4 &&
             // minerPubKeyHash
             script.chunks[6].len) {
             signature = script.chunks[0].buf;

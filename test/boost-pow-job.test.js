@@ -289,16 +289,21 @@ describe('boost #BoostPowString tryValidateJobProof', () => {
       211198-Mar 15 05:43:40 ip-172-31-47-53 sserver[30281]: I0315 05:43:40.175973 30327 StratumServerBitcoin.cc:689] >>>> found a new block_boost: 0000000000f0e97bec0c369dd6c7cbde0243a351d8ab138778717c63660afa35, jobId: 6804306268015034369, userId: 35, by: shedminer.002 <<<<0 <<<<8158deab634af238d95a61ed93ab57f0cd8b1972988c92dbbd932f88b6fcb835 <<<<7687b9ef4a2a8bc0387336177e4f90ceabca3cbdf246ad4e9f27d4d94f1f4019 <<<<1584251009 <<<<486604799 <<<<480340448
       211199-Mar 15 05:43:40 ip-172-31-47-53 sserver[30281]: I0315 05:43:40.175994 30327 StratumServerBitcoin.cc:710] high diff share, blkhash: 0000000000f0e97bec0c369dd6c7cbde0243a351d8ab138778717c63660afa35, diff: 272, networkDiff: 1, by: shedminer.002
       */
+     
       const jobProof = index.BoostPowJobProof.fromObject({
          signature: '00',
          minerPubKey: '00',
-         extraNonce1: Buffer.from('0a00000a', 'hex').toString('hex'),
-         extraNonce2: Buffer.from('bf07000000000000', 'hex').toString('hex'),
-         time: Buffer.from('5e6dc081', 'hex').toString('hex'),
-         nonce:  Buffer.from('1ca169e0', 'hex').toString('hex'),
-         minerPubKeyHash: Buffer.from('9fb8cb68b8850a13c7438e26e1d277b748be657a', 'hex').toString('hex'),
+         extraNonce1: '0a00000a',
+         extraNonce2: 'bf07000000000000',
+         time: '5e6dc081',
+         nonce:  '1ca169e0',
+         minerPubKeyHash: '9fb8cb68b8850a13c7438e26e1d277b748be657a',
       });
+
+      const mining = BoostPowSimpleMinerModel.startMining(job, jobProof, 1);
+      
       const result = index.BoostPowJob.tryValidateJobProof(job, jobProof);
+
       expect(result.boostPowString.hash()).to.eql('0000000000f0e97bec0c369dd6c7cbde0243a351d8ab138778717c63660afa35');
       expect(result.boostPowMetadata.hash()).to.eql('7687b9ef4a2a8bc0387336177e4f90ceabca3cbdf246ad4e9f27d4d94f1f4019');
       expect(result.boostPowString.metadataHash()).to.eql(result.boostPowMetadata.hash());

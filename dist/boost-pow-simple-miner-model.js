@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoostPowSimpleMinerModel = void 0;
 const boost_pow_job_model_1 = require("./boost-pow-job-model");
-const cryptoRandomString = require("crypto-random-string");
 class BoostPowSimpleMinerModel {
     /**
      * Start mining the Boost Job
@@ -10,14 +9,24 @@ class BoostPowSimpleMinerModel {
      */
     static startMining(job, jobProof, debugLevel = 0, increment, cancel) {
         let boostPowString;
-        let counter = 0;
-        while (!boostPowString) {
-            jobProof.setNonce(cryptoRandomString({ length: 8 }));
-            jobProof.setExtraNonce1(cryptoRandomString({ length: 8 }));
-            jobProof.setExtraNonce2(cryptoRandomString({ length: 8 }));
-            jobProof.setTime(Math.round((new Date()).getTime() / 1000).toString(16));
+        let counter = jobProof.getNonceNumber();
+        let extra_nonce_2 = jobProof.getExtraNonce2Number();
+        let max_big_int = BigInt('9223372036854775807');
+        while (true) {
             boostPowString = boost_pow_job_model_1.BoostPowJobModel.tryValidateJobProof(job, jobProof);
-            if (counter++ % 500000 === 0) {
+            if (boostPowString)
+                break;
+            if (counter == 0x7fffffff) {
+                counter = 0;
+                if (extra_nonce_2 == max_big_int)
+                    extra_nonce_2 = BigInt(0);
+                extra_nonce_2 = extra_nonce_2 + BigInt(1);
+                jobProof.setExtraNonce2(extra_nonce_2);
+            }
+            else
+                counter++;
+            jobProof.setNonce(counter);
+            if (counter % 500000 === 0) {
                 if (debugLevel >= 1) {
                     console.log('Hashes checked: ', counter);
                 }

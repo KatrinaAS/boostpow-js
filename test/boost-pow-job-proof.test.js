@@ -46,7 +46,7 @@ describe('boost #BoostPowJobProof', () => {
       });
 
       // Important so we can create a mini cpu miner to just update the relevant sections quickly
-      jobProof.setNonce('30000002');
+      jobProof.setNonce(0x02000030);
       jobProof.setTime('12300009');
 
       expect(jobProof.toObject()).to.eql({
@@ -77,7 +77,7 @@ describe('boost #BoostPowJobProof', () => {
             "time": "b851825e",
       });
       expect(jobProof.getTimeNumber()).to.eql(1585598904);
-      expect(jobProof.getNonceNumber()).to.eql(2964235106);
+      expect(jobProof.getNonceNumber()).to.eql(-1330732190);
       expect(jobProof.getTxid()).to.eql('5fc289d2b04e98ca9ffb0156f5c66b9dac38af65630ea45ac8508a716af1e9b3');
       expect(jobProof.getVin()).to.eql(0);
 
@@ -99,7 +99,7 @@ describe('boost #BoostPowJobProof', () => {
             "time": "b851825e",
       });
       expect(jobProof.getTimeNumber()).to.eql(1585598904);
-      expect(jobProof.getNonceNumber()).to.eql(2964235106);
+      expect(jobProof.getNonceNumber()).to.eql(-1330732190);
       expect(jobProof.getTxid()).to.eql(undefined);
       expect(jobProof.getVin()).to.eql(undefined);
    });
@@ -150,10 +150,10 @@ describe('boost #BoostPowJobProof', () => {
 
 describe('BoostPowJobProof ', () => {
    it('should correctly load fromHex', async () => {
-      const job = index.BoostPowJobProof.fromHex('4100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002102625DA04587E77640A731637CB24B3965DCDE3A05CE9CE837FFA217153F5F9ED8040B000000040100000004EA000000040000000014ECF5E2164C52D081EF19FBF59C81C66BABB02C55')
+      const job = index.BoostPowJobProof.fromHex('4100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002102625DA04587E77640A731637CB24B3965DCDE3A05CE9CE837FFA217153F5F9ED8040B000000040100000008EA00000000000000040000000014ECF5E2164C52D081EF19FBF59C81C66BABB02C55')
       expect(job.toObject()).to.eql({
          "extraNonce1": "00000000",
-         "extraNonce2": "ea000000",
+         "extraNonce2": "ea00000000000000",
          "minerPubKey": "02625da04587e77640a731637cb24b3965dcde3a05ce9ce837ffa217153f5f9ed8",
          "minerPubKeyHash": "ecf5e2164c52d081ef19fbf59c81c66babb02c55",
          "nonce": "0b000000",

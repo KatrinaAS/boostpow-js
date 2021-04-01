@@ -32,13 +32,13 @@ export declare class BoostPowJobProofModel {
     setTime(time: string): void;
     getExtraNonce1Number(): number;
     getExtraNonce1(): Buffer;
-    getExtraNonce2Number(): number;
+    getExtraNonce2Number(): bigint;
     getExtraNonce2(): Buffer;
     getNonceNumber(): number;
     getNonce(): Buffer;
-    setNonce(nonce: string): void;
+    setNonce(nonce: number): void;
     setExtraNonce1(nonce: string): void;
-    setExtraNonce2(nonce: string): void;
+    setExtraNonce2(nonce: bigint): void;
     getMinerPubKeyHash(): Buffer;
     getMinerPubKeyHashHex(): string;
     setSignature(signature: string): void;
