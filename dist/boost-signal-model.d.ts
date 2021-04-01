@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { BoostPowStringModel } from './boost-pow-string-model';
 import { BoostPowMetadataModel } from './boost-pow-metadata-model';
 export declare class BoostSignalModel {
@@ -15,7 +16,7 @@ export declare class BoostSignalModel {
     energy(): number;
     content(hex?: boolean): string;
     category(hex?: boolean): string;
-    metadataHash(): string;
+    metadataHash(): Buffer;
     time(): number;
     nonce(): number;
     tag(hex?: boolean): string | null;

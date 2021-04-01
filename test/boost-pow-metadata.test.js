@@ -56,7 +56,7 @@ describe('boost #BoostPowMetadata tests', () => {
 
       const expected_hash = '25a1183dc22f13565fe49c66a3e058a4cfe80c1e3e43565a1004d49b3aced22d';
       expect(bsv.crypto.Hash.sha256sha256(Buffer.from(metadata_string, 'hex')).toString('hex')).to.eql(expected_hash);
-      expect(fromHex.hash()).to.eql(expected_hash);
+      expect(fromHex.hash().toString('hex')).to.eql(expected_hash);
    });
 
 });
@@ -116,7 +116,7 @@ describe('boost #BoostPowJob createBoostPowMetadata', () => {
          index.BoostPowJob.createBoostPowMetadata(job, jobProof).toBuffer()).toString('hex'))
       .to.eql(expectedMerkleRootMetaHash);
 
-      expect(index.BoostPowJob.createBoostPowMetadata(job, jobProof).hash()).to.eql(expectedMerkleRootMetaHash);
+      expect(index.BoostPowJob.createBoostPowMetadata(job, jobProof).hash().toString('hex')).to.eql(expectedMerkleRootMetaHash);
       /*
       {"method": "mining.submit", "params": ["abra.001", "3", "0000000000000000", "5e802ed9", "e2731ee0"], "id":4}
       Mar 29 05:15:52 ip-172-31-47-53 sserverboost[15138]: I0329 05:15:52.473852 15138 StratumServerBitcoinBoost.cc:303] coinbase: 231200000000000000000000000000000000000092e4d5ab4bb067f872d28f44d3e5433e56fca190extra nonce-> 460000050000000000000000<- extra nonce  user nonce ->88660000<- user nonce ->9400000000000000000000000000000000000000000000000000000000000000

@@ -458,7 +458,7 @@ class BoostPowJobModel {
         const headerBuf = Buffer.concat([
             boostPowJob.getCategoryBuffer(),
             boostPowJob.getContentBuffer(),
-            boostPowMetadataCoinbaseString.hashAsBuffer(),
+            boostPowMetadataCoinbaseString.hash(),
             boostPowJobProof.getTime(),
             boostPowJob.getTargetAsNumberBuffer(),
             boostPowJobProof.getNonce(),

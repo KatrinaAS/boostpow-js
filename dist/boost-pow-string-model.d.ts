@@ -1,18 +1,19 @@
+/// <reference types="node" />
 import * as bsv from 'bsv';
 import { BoostPowMetadataModel } from './boost-pow-metadata-model';
 export declare class BoostPowStringModel {
     private _blockheader;
     private _metadata;
     constructor(blockheader: bsv.BlockHeader, metadata?: BoostPowMetadataModel);
-    boosthash(): string;
     hash(): string;
+    boosthash(): string;
     id(): string;
     contentHex(): string;
     contentBuffer(): string;
     trimBufferString(str: string, trimLeadingNulls?: boolean): string;
     contentString(trimLeadingNulls?: boolean): string;
     bits(): number;
-    metadataHash(): string;
+    metadataHash(): Buffer;
     nonce(): number;
     time(): number;
     category(): number;
@@ -41,12 +42,12 @@ export declare class BoostPowStringModel {
     toString(): any;
     toHex(): any;
     toObject(): {
-        hash: any;
+        hash: string;
         content: any;
         bits: any;
         difficulty: number;
         category: any;
-        metadataHash: any;
+        metadataHash: string;
         time: any;
         nonce: any;
     };

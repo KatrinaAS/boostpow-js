@@ -46,7 +46,7 @@ describe('boost #BoostPowString.fromString', () => {
 
    it('should correctly decode Bitcoin header', async () => {
       const boostPowString = index.BoostPowString.fromString('010000009500c43a25c624520b5100adf82cb9f9da72fd2447a496bc600b0000000000006cd862370395dedf1da2841ccda0fc489e3039de5f1ccddef0e834991a65600ea6c8cb4db3936a1ae3143991');
-      expect(boostPowString.hash()).to.equal('0000000000002917ed80650c6174aac8dfc46f5fe36480aaef682ff6cd83c3ca');
+      expect(boostPowString.hash()).to.equal('cac383cdf62f68efaa8064e35f6fc4dfc8aa74610c6580ed1729000000000000');
    });
 
    it('should correctly decode First boost header mined by attila', async () => {
@@ -54,13 +54,13 @@ describe('boost #BoostPowString.fromString', () => {
      // 01000000646c726f77206f6c6c65480000000000000000000000000000000000000000002a96153663424ecfd483872e26e59bb02fd781a965df6575c437b0848e27d8aca6c8cb4dffff001dae5172dc
      // 1000000646c726f77206f6c6c65480000000000000000000000000000000000000000002a96
      // 153663424ecfd483872e26e59bb02fd781a965df6575c437b0848e27d8aca6c8cb4dffff001dae5172dc
-      expect(boostPowString.hash()).to.equal('0000000086915e291fe43f10bdd8232f65e6eb64628bbb4d128be3836c21b6cc');
+      expect(boostPowString.hash()).to.equal('ccb6216c83e38b124dbb8b6264ebe6652f23d8bd103fe41f295e918600000000');
       expect(boostPowString.toObject()).to.eql({
-         hash: '0000000086915e291fe43f10bdd8232f65e6eb64628bbb4d128be3836c21b6cc',
+         hash: 'ccb6216c83e38b124dbb8b6264ebe6652f23d8bd103fe41f295e918600000000',
          content: '00000000000000000000000000000000000000000048656c6c6f20776f726c64',
          bits: 486604799,
          difficulty: 1,
-         metadataHash: "acd8278e84b037c47565df65a981d72fb09be5262e8783d4cf4e42633615962a",
+         metadataHash: "2a96153663424ecfd483872e26e59bb02fd781a965df6575c437b0848e27d8ac",
          time: 1305200806,
          nonce: 3698479534,
          category: 1,
@@ -81,11 +81,11 @@ describe('boost #BoostPowString.fromString', () => {
    it('should correctly decode from string to object', async () => {
       const obj = index.BoostPowString.fromString('010000009500c43a25c624520b5100adf82cb9f9da72fd2447a496bc600b0000000000006cd862370395dedf1da2841ccda0fc489e3039de5f1ccddef0e834991a65600ea6c8cb4db3936a1ae3143991');
       expect(obj.toObject()).to.eql({
-         hash: '0000000000002917ed80650c6174aac8dfc46f5fe36480aaef682ff6cd83c3ca',
+         hash: 'cac383cdf62f68efaa8064e35f6fc4dfc8aa74610c6580ed1729000000000000',
          content: '0000000000000b60bc96a44724fd72daf9b92cf8ad00510b5224c6253ac40095',
          bits: 443192243,
          difficulty: 157416.40184364,
-         metadataHash: "0e60651a9934e8f0decd1c5fde39309e48fca0cd1c84a21ddfde95033762d86c",
+         metadataHash: "6cd862370395dedf1da2841ccda0fc489e3039de5f1ccddef0e834991a65600e",
          time: 1305200806,
          nonce: 2436437219,
          category: 1,
@@ -179,13 +179,13 @@ describe('boost #BoostPowString validateProofOfWork ', () => {
 describe('BoostPowString', () => {
    it('should get correctly accessors', async () => {
       const boostPowString = index.BoostPowString.fromString('01000000646c726f77206f6c6c65480000000000000000000000000000000000000000002a96153663424ecfd483872e26e59bb02fd781a965df6575c437b0848e27d8aca6c8cb4dffff001dae5172dc');
-      expect(boostPowString.hash()).to.equal('0000000086915e291fe43f10bdd8232f65e6eb64628bbb4d128be3836c21b6cc');
+      expect(boostPowString.hash()).to.equal('ccb6216c83e38b124dbb8b6264ebe6652f23d8bd103fe41f295e918600000000');
       expect(boostPowString.toObject()).to.eql({
-         hash: '0000000086915e291fe43f10bdd8232f65e6eb64628bbb4d128be3836c21b6cc',
+         hash: 'ccb6216c83e38b124dbb8b6264ebe6652f23d8bd103fe41f295e918600000000',
          content: '00000000000000000000000000000000000000000048656c6c6f20776f726c64',
          bits: 486604799,
          difficulty: 1,
-         metadataHash: "acd8278e84b037c47565df65a981d72fb09be5262e8783d4cf4e42633615962a",
+         metadataHash: "2a96153663424ecfd483872e26e59bb02fd781a965df6575c437b0848e27d8ac",
          time: 1305200806,
          nonce: 3698479534,
          category: 1,
@@ -199,7 +199,7 @@ describe('BoostPowString', () => {
       expect(boostPowString.bits()).to.eql(486604799);
       expect(boostPowString.bits().toString(16)).to.eql('1d00ffff');
       expect(boostPowString.difficulty()).to.eql(1);
-      expect(boostPowString.metadataHash()).to.eql('acd8278e84b037c47565df65a981d72fb09be5262e8783d4cf4e42633615962a');
+      expect(boostPowString.metadataHash().toString('hex')).to.eql('2a96153663424ecfd483872e26e59bb02fd781a965df6575c437b0848e27d8ac');
       expect(boostPowString.time()).to.eql(1305200806);
       expect(boostPowString.nonce()).to.eql(3698479534);
       expect(boostPowString.category()).to.eql(1);

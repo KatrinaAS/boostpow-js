@@ -12,24 +12,26 @@ export class BoostPowStringModel {
         }
 
         if (metadata) {
-            if (!this._blockheader.merkleRoot !== metadata.hash()) {
+            if (this._blockheader.merkleRoot !== metadata.hash()) {
                 throw new Error('INVALID_METADATA');
             }
             this._metadata = metadata;
         }
     }
+
+    hash(): string {
+        // it needs to be reversed because bsv lib has it backwards. 
+        return Buffer.from(this._blockheader.hash, "hex").reverse().toString("hex");
+    }
+
     // Use boosthash(), hash() and id() to all be equal to the string
     // remember, the string itself is the data and proof of work identity.
     boosthash(): string {
-        return this._blockheader.hash;
-    }
-
-    hash(): string {
-        return this._blockheader.hash;
+        return this.hash();
     }
 
     id(): string {
-        return this._blockheader.hash;
+        return this.hash();
     }
 
     contentHex(): string {
@@ -57,8 +59,8 @@ export class BoostPowStringModel {
         return this.toObject().bits;
     }
 
-    metadataHash(): string {
-        return this.toObject().metadataHash;
+    metadataHash(): Buffer {
+        return this._blockheader.merkleRoot;
     }
 
     nonce(): number {
@@ -185,12 +187,12 @@ export class BoostPowStringModel {
     toObject () {
         const blockheaderObj = this._blockheader.toObject();
         const boostheaderObj = {
-            hash: blockheaderObj.hash,
+            hash: this.hash(),
             content: blockheaderObj.prevHash,
             bits: blockheaderObj.bits,
             difficulty: this.difficulty(),
             category: blockheaderObj.version,
-            metadataHash: blockheaderObj.merkleRoot,
+            metadataHash: this.metadataHash().toString("hex"),
             time: blockheaderObj.time,
             nonce: blockheaderObj.nonce,
         };

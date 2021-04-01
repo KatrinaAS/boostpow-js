@@ -18,8 +18,8 @@ class BoostSignalModel {
         // On the other hand if the metadata is provided, then we will strictly check that they belong together!
         // Validate the proof of work here matches the metadataHash because we trust no one!
         //
-        if (boostPowString.metadataHash() !==
-            bsv.crypto.Hash.sha256sha256(boostPowMetadata.toBuffer()).reverse().toString('hex')) {
+        // I don't know why we need 'toString' here. It would be more efficient without it. -- Daniel
+        if (boostPowString.metadataHash().toString('hex') != bsv.crypto.Hash.sha256sha256(boostPowMetadata.toBuffer()).toString('hex')) {
             throw new Error('Fatal: Invalid metadata for the pow string');
         }
     }

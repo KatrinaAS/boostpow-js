@@ -516,7 +516,7 @@ export class BoostPowJobModel {
             script: bsv.Script.empty()
           })
         );
-        
+
         const privKey = new bsv.PrivateKey(privateKeyStr);
         const sigtype = bsv.crypto.Signature.SIGHASH_ALL | bsv.crypto.Signature.SIGHASH_FORKID;
         const flags = bsv.Script.Interpreter.SCRIPT_VERIFY_MINIMALDATA | bsv.Script.Interpreter.SCRIPT_ENABLE_SIGHASH_FORKID | bsv.Script.Interpreter.SCRIPT_ENABLE_MAGNETIC_OPCODES | bsv.Script.Interpreter.SCRIPT_ENABLE_MONOLITH_OPCODES;
@@ -574,7 +574,7 @@ export class BoostPowJobModel {
         const headerBuf = Buffer.concat([
             boostPowJob.getCategoryBuffer(),
             boostPowJob.getContentBuffer(),
-            boostPowMetadataCoinbaseString.hashAsBuffer(),
+            boostPowMetadataCoinbaseString.hash(),
             boostPowJobProof.getTime(),
             boostPowJob.getTargetAsNumberBuffer(),
             boostPowJobProof.getNonce(),

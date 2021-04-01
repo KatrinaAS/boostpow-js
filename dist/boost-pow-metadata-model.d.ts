@@ -35,8 +35,7 @@ export declare class BoostPowMetadataModel {
     getAdditionalDataUtf8(): string;
     toString(): string;
     getCoinbaseString(): string;
-    hash(): any;
-    hashAsBuffer(): any;
+    hash(): Buffer;
     toObject(): {
         tag: string;
         minerPubKeyHash: string;

@@ -266,13 +266,13 @@ describe('boost #BoostPowString tryValidateJobProof', () => {
  
       const result = index.BoostPowJob.tryValidateJobProof(job, jobProof);
       expect(result.boostPowString.toString()).to.eql('000000004bd94af3e76f57ba13d790f02d5ff3ad7dd0451c2a31ecd2cb1fdbb0f3a932330c7e3858267273997f3981b674195bb3b25033264eff57c9aee9f7fca08d2211b7768f5fffff001d32000988');
-      expect(result.boostPowString.hash()).to.eql('0000000005fe6ee4cbb33d916681681e01740a6f7e79a862c80f7168c879560b');
+      expect(result.boostPowString.hash()).to.eql('0b5679c868710fc862a8797e6f0a74011e688166913db3cbe46efe0500000000');
       expect(result.boostPowMetadata.toString()).to.eql('65636e616e6966230000000000000000000000000af0c49c7e8c842243913bbea2491027cf4e6babb008b2f59702000000000000000000000000000000000000000000000000000000000000000000000000000000000000');
       expect(jobProof.txid).to.eql('6f1060446ad5cf56d2cf75c116be3b6b354cf0c7b3e8da57fb3a9d6b71780ad0');
       expect(jobObj.time).to.eql('b7768f5f');
       expect(
          index.BoostSignal.fromHex(result.boostPowString.toString(), result.boostPowMetadata.toString()).time()).to.eql(1603237559);
-      expect(Buffer.from(result.boostPowString.metadataHash(), "hex").reverse().toString("hex")).to.eql(result.boostPowMetadata.hash());
+      expect(result.boostPowString.metadataHash().toString("hex")).to.eql(result.boostPowMetadata.hash().toString('hex'));
    });
 
    it('tryValidateJobProof success valid pow mined', async () => {
@@ -296,16 +296,16 @@ describe('boost #BoostPowString tryValidateJobProof', () => {
          extraNonce1: '0a00000a',
          extraNonce2: 'bf07000000000000',
          time: '5e6dc081',
-         nonce:  '1ca169e0',
+         nonce:  '30F88A7C',
          minerPubKeyHash: '9fb8cb68b8850a13c7438e26e1d277b748be657a',
       });
 
-      const mining = BoostPowSimpleMinerModel.startMining(job, jobProof, 1);
+      //const mining = BoostPowSimpleMinerModel.startMining(job, jobProof, 1);
       
       const result = index.BoostPowJob.tryValidateJobProof(job, jobProof);
 
-      expect(result.boostPowString.hash()).to.eql('0000000000f0e97bec0c369dd6c7cbde0243a351d8ab138778717c63660afa35');
-      expect(result.boostPowMetadata.hash()).to.eql('7687b9ef4a2a8bc0387336177e4f90ceabca3cbdf246ad4e9f27d4d94f1f4019');
+      expect(result.boostPowString.hash()).to.eql('087eea932bfeeeacbc9b683d00daa1debf2dec170a4e1b3daa3a6c4900000000');
+      expect(result.boostPowMetadata.hash().toString('hex')).to.eql('19401f4fd9d4279f4ead46f2bd3ccaabce904f7e17367338c08b2a4aefb98776');
       expect(result.boostPowString.metadataHash()).to.eql(result.boostPowMetadata.hash());
    });
 });
@@ -446,13 +446,13 @@ describe('BoostPowJob', () => {
 
    it('should correctly match up forms of variables for pow string and pow job', async () => {
       const boostPowString = index.BoostPowString.fromString('01000000646c726f77206f6c6c65480000000000000000000000000000000000000000002a96153663424ecfd483872e26e59bb02fd781a965df6575c437b0848e27d8aca6c8cb4dffff001dae5172dc');
-      expect(boostPowString.hash()).to.equal('0000000086915e291fe43f10bdd8232f65e6eb64628bbb4d128be3836c21b6cc');
+      expect(boostPowString.hash()).to.equal('ccb6216c83e38b124dbb8b6264ebe6652f23d8bd103fe41f295e918600000000');
       expect(boostPowString.toObject()).to.eql({
-         hash: '0000000086915e291fe43f10bdd8232f65e6eb64628bbb4d128be3836c21b6cc',
+         hash: 'ccb6216c83e38b124dbb8b6264ebe6652f23d8bd103fe41f295e918600000000',
          content: '00000000000000000000000000000000000000000048656c6c6f20776f726c64',
          bits: 486604799,
          difficulty: 1,
-         metadataHash: "acd8278e84b037c47565df65a981d72fb09be5262e8783d4cf4e42633615962a",
+         metadataHash: "2a96153663424ecfd483872e26e59bb02fd781a965df6575c437b0848e27d8ac",
          time: 1305200806,
          nonce: 3698479534,
          category: 1,
