@@ -343,31 +343,33 @@ describe('boost #BoostPowJob createRedeemTransaction', () => {
       211198-Mar 15 05:43:40 ip-172-31-47-53 sserver[30281]: I0315 05:43:40.175973 30327 StratumServerBitcoin.cc:689] >>>> found a new block_boost: 0000000000f0e97bec0c369dd6c7cbde0243a351d8ab138778717c63660afa35, jobId: 6804306268015034369, userId: 35, by: shedminer.002 <<<<0 <<<<8158deab634af238d95a61ed93ab57f0cd8b1972988c92dbbd932f88b6fcb835 <<<<7687b9ef4a2a8bc0387336177e4f90ceabca3cbdf246ad4e9f27d4d94f1f4019 <<<<1584251009 <<<<486604799 <<<<480340448
       211199-Mar 15 05:43:40 ip-172-31-47-53 sserver[30281]: I0315 05:43:40.175994 30327 StratumServerBitcoin.cc:710] high diff share, blkhash: 0000000000f0e97bec0c369dd6c7cbde0243a351d8ab138778717c63660afa35, diff: 272, networkDiff: 1, by: shedminer.002
       */
+     
       const jobProof = index.BoostPowJobProof.fromObject({
          signature: '00',
          minerPubKey: '020370f418d21765b33bc093db143aa1dd5cfefc97275652dc8396c2d567f93d65',
-         extraNonce1: Buffer.from('0a00000a', 'hex').toString('hex'),
-         extraNonce2: Buffer.from('bf07000000000000', 'hex').toString('hex'),
-         time: Buffer.from('5e6dc081', 'hex').toString('hex'),
-         nonce: Buffer.from('1ca169e0', 'hex').toString('hex'),
-         minerPubKeyHash: Buffer.from('9fb8cb68b8850a13c7438e26e1d277b748be657a', 'hex').toString('hex'),
+         extraNonce1: '0a00000a',
+         extraNonce2: 'bf07000000000000',
+         time: '5e6dc081',
+         nonce: '30f88a7c',
+         minerPubKeyHash: '9fb8cb68b8850a13c7438e26e1d277b748be657a',
       });
+
       const powString = index.BoostPowJob.tryValidateJobProof(job, jobProof);
-      expect(powString.boostPowString.toString()).to.eql('0000000035b8fcb6882f93bddb928c9872198bcdf057ab93ed615ad938f24a63abde588119401f4fd9d4279f4ead46f2bd3ccaabce904f7e17367338c08b2a4aefb9877681c06d5effff001de069a11c');
-      expect(powString.boostPowString.hash()).to.eql('0000000000f0e97bec0c369dd6c7cbde0243a351d8ab138778717c63660afa35');
+      expect(powString.boostPowString.toString()).to.eql('0000000035b8fcb6882f93bddb928c9872198bcdf057ab93ed615ad938f24a63abde588119401f4fd9d4279f4ead46f2bd3ccaabce904f7e17367338c08b2a4aefb987765e6dc081ffff001d30f88a7c');
+      expect(powString.boostPowString.hash()).to.eql('087eea932bfeeeacbc9b683d00daa1debf2dec170a4e1b3daa3a6c4900000000');
 
       expect(jobProof.toObject()).to.eql({
          "extraNonce1": "0a00000a",
          "extraNonce2": "bf07000000000000",
          "minerPubKey": "020370f418d21765b33bc093db143aa1dd5cfefc97275652dc8396c2d567f93d65",
          "minerPubKeyHash": "9fb8cb68b8850a13c7438e26e1d277b748be657a",
-         "nonce": "1ca169e0",
+         "nonce": "30f88a7c",
          "signature": "00",
          "time": "5e6dc081",
       });
 
       let tx = index.BoostPowJob.createRedeemTransaction(job, jobProof, '5d5c870220eeb18afe8a498324013955c316cbaaed2a824e5230362c36964c27', '1264UeZnzrjrMdYn1QSED5TCbY8Gd11e23');
-      expect(tx.toString()).to.eql('010000000118a53177a5852a9a516c3595ac488febe18c349b44745e494510a288a545b54e0000000098483045022100aa9c8d5cd3b975e00305122b9ce5ce965565f4e36f6dce24870da45fb153636102201aa4ddcd5fa69b73ff498d309de137c5c0c82b32ddd3b864aabe96973e4afc414121020370f418d21765b33bc093db143aa1dd5cfefc97275652dc8396c2d567f93d6504e069a11c0481c06d5e08bf07000000000000040a00000a149fb8cb68b8850a13c7438e26e1d277b748be657affffffff01781e0000000000001976a9140bed1b97a1ec681cf100ee8b11800a54b39b9fda88ac00000000');
+      expect(tx.toString()).to.eql('010000000118a53177a5852a9a516c3595ac488febe18c349b44745e494510a288a545b54e0000000098483045022100aa9c8d5cd3b975e00305122b9ce5ce965565f4e36f6dce24870da45fb153636102201aa4ddcd5fa69b73ff498d309de137c5c0c82b32ddd3b864aabe96973e4afc414121020370f418d21765b33bc093db143aa1dd5cfefc97275652dc8396c2d567f93d650430f88a7c045e6dc08108bf07000000000000040a00000a149fb8cb68b8850a13c7438e26e1d277b748be657affffffff01781e0000000000001976a9140bed1b97a1ec681cf100ee8b11800a54b39b9fda88ac00000000');
    });
 });
 

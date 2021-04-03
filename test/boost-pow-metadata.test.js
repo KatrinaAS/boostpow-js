@@ -73,7 +73,7 @@ describe('boost #BoostPowJob createBoostPowMetadata', () => {
       const content = '3255930000000000000000000000000000000000000000000000000000000000';
       const extraNonce1Int = 1174405125;
       const extraNonce1Hex = Buffer.from(extraNonce1Int.toString(16), 'hex').toString('hex');
-      const extraNonce2Hex = '0000000000000000';
+      const extraNonce2Hex = '0000000000000005';
 
       expect(job.toObject()).to.eql({
          content: content,
@@ -85,7 +85,7 @@ describe('boost #BoostPowJob createBoostPowMetadata', () => {
       });
 
       var expectedPubKeyHash = '92e4d5ab4bb067f872d28f44d3e5433e56fca190';
-      const nonceHex = 'e2731ee0';
+      const nonceHex = '4498ac10';
       const timeHex = '5e802ed9';
       const jobProof = index.BoostPowJobProof.fromObject({
          signature: '00',
@@ -107,11 +107,11 @@ describe('boost #BoostPowJob createBoostPowMetadata', () => {
          "time": timeHex,
       });
 
-      const expected_metadata = '231200000000000000000000000000000000000092e4d5ab4bb067f872d28f44d3e5433e56fca190460000050000000000000000886600009400000000000000000000000000000000000000000000000000000000000000';
+      const expected_metadata = '231200000000000000000000000000000000000092e4d5ab4bb067f872d28f44d3e5433e56fca190460000050000000000000005886600009400000000000000000000000000000000000000000000000000000000000000';
 
       expect(index.BoostPowJob.createBoostPowMetadata(job, jobProof).toBuffer().toString('hex')).to.eql(expected_metadata);
 
-      const expectedMerkleRootMetaHash = '84c441284e9e919e73e3318b11dfce8cec8647e0a9a9f2c694e73b4b7bee6bfc';
+      const expectedMerkleRootMetaHash = '011a38898a1c74b0e4ec496e1be6790c94acb0f691f2c2a48dd13dc9671fb439';
       expect(bsv.crypto.Hash.sha256sha256(
          index.BoostPowJob.createBoostPowMetadata(job, jobProof).toBuffer()).toString('hex'))
       .to.eql(expectedMerkleRootMetaHash);
@@ -139,7 +139,7 @@ describe('boost #BoostPowJob createBoostPowMetadata', () => {
  */
       const powString = index.BoostPowJob.tryValidateJobProof(job, jobProof);
 
-      expect(powString.boostPowString.hash()).to.eql('00000000f3a3ce33b86e99236e561d8e641ad62f13277a77abef50a6673e9330');
+      expect(powString.boostPowString.hash()).to.eql('6d8aa039bf8ec9875c47a680c2c6d65c77af4be6347d08ab4405598900000000');
       const powMetadata = index.BoostPowJob.createBoostPowMetadata(job, jobProof);
 
       expect(powString.boostPowString.metadataHash()).to.eql(
