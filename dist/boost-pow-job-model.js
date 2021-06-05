@@ -280,8 +280,7 @@ class BoostPowJobModel {
             script.chunks[6].buf &&
             script.chunks[6].len === 4 &&
             // Additional Data
-            script.chunks[7].buf &&
-            script.chunks[7].len === 32) {
+            script.chunks[7].buf) {
             if (BoostPowJobModel.remainingOperationsMatchExactly(script.chunks, 8, BoostPowJobModel.scriptOperationsV1NoASICBoost())) {
                 useGeneralPurposeBits = false;
             }
@@ -603,7 +602,7 @@ class BoostPowJobModel {
             bsv.Opcode.OP_SWAP,
             bsv.Opcode.OP_CAT,
             bsv.Opcode.OP_HASH256,
-            // SWAP TOALTSTACK CAT CAT                    // target and content + merkleroot to altstack. 
+            // SWAP TOALTSTACK CAT CAT                    // target and content + merkleroot to altstack.
             bsv.Opcode.OP_SWAP,
             bsv.Opcode.OP_TOALTSTACK,
             bsv.Opcode.OP_CAT,

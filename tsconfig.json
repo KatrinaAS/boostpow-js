@@ -5,7 +5,10 @@
     "declaration": true,
     "outDir": "./dist",
     "strict": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "typeRoots": [ "./types", "./node_modules/@types"],
+    "exclude": ["node_modules", "typings"]
   }
+
 }
 

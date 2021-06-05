@@ -52,7 +52,7 @@
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
     "browserify-shim": "^3.8.14",
-    "bsv": "^1.5.6",
+    "bsv": "^2.0.10-beta1",
     "chai": "^4.2.0",
     "gulp": "^4.0.2",
     "gulp-batch": "^1.0.5",
@@ -80,7 +80,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
-    "@types/node": "^13.7.7",
+    "@types/node": "^13.13.52",
     "axios": "^0.21.1",
     "crypto-random-string": "^3.1.0",
     "i": "^0.3.6",

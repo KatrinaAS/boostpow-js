@@ -3,6 +3,8 @@ import { BoostPowStringModel } from './boost-pow-string-model';
 import { BoostPowJobProofModel } from './boost-pow-job-proof-model';
 import { BoostPowMetadataModel } from './boost-pow-metadata-model';
 import { BoostUtils } from './boost-utils';
+import {BsvUtils} from "./bsv-utils";
+import {Br} from "bsv";
 
 export class BoostPowJobModel {
     private constructor(
@@ -12,7 +14,7 @@ export class BoostPowJobModel {
         private tag: Buffer,
         private additionalData: Buffer,
         private userNonce: Buffer,
-        private useGeneralPurposeBits: boolean, 
+        private useGeneralPurposeBits: boolean,
         // Optional tx information attached or not
         private txid?: string,
         private vout?: number,
@@ -21,6 +23,7 @@ export class BoostPowJobModel {
     }
 
     private trimBufferString(str: string, trimLeadingNulls = true): string {
+
         const content = Buffer.from(str, 'hex').toString('utf8');
         if (trimLeadingNulls) {
             return content.replace(/\0/g, '');
@@ -134,7 +137,7 @@ export class BoostPowJobModel {
             BoostUtils.createBufferAndPad(params.category, 4),
             BoostUtils.createBufferAndPad(params.tag, 20),
             BoostUtils.createBufferAndPad(params.additionalData, 32),
-            BoostUtils.createBufferAndPad(params.userNonce, 4), 
+            BoostUtils.createBufferAndPad(params.userNonce, 4),
             false
         );
     }
@@ -206,42 +209,42 @@ export class BoostPowJobModel {
     }
 
     toHex(): string {
-        return this.toScript(true);
+        return <string>this.toScript(true);
     }
 
-    toScript(isHex: boolean = false): bsv.Script {
-        let buildOut = bsv.Script();
+    toScript(isHex: boolean = false): bsv.Script | string {
+        let buildOut = new bsv.Script();
 
-        buildOut.add(Buffer.from('boostpow', 'utf8'));
+        buildOut.writeBuffer(Buffer.from('boostpow', 'utf8'))
 
-        buildOut.add(bsv.Opcode.OP_DROP);
+        buildOut.writeOpCode(bsv.OpCode.fromString("OP_DROP").toNumber())
 
-        buildOut.add(this.category);
+        buildOut.writeBuffer(this.category);
 
-        buildOut.add(this.content);
+        buildOut.writeBuffer(this.content);
 
-        buildOut.add(this.getTargetAsNumberBuffer());
+        buildOut.writeBuffer(this.getTargetAsNumberBuffer());
 
-        buildOut.add(this.tag);
+        buildOut.writeBuffer(this.tag);
 
-        buildOut.add(this.userNonce);
+        buildOut.writeBuffer(this.userNonce);
 
-        buildOut.add(this.additionalData);
+        buildOut.writeBuffer(this.additionalData);
 
         // Add the rest of the script
         for (const op of BoostPowJobModel.scriptOperations(this.useGeneralPurposeBits)) {
-            buildOut.add(op);
+            buildOut.writeOpCode(op);
         }
 
         for (let i = 0; i < buildOut.chunks.length ; i++) {
-            if (!buildOut.checkMinimalPush(i)) {
+            if (!BsvUtils.checkChunkMinimalPush(buildOut.chunks[i])) {
                 throw new Error('not min push');
             }
         }
 
-        const hex = buildOut.toHex();
-        const fromhex = bsv.Script.fromHex(hex);
-        const hexIso = fromhex.toHex();
+        const hex = buildOut.toBuffer().toString('hex');
+        const fromHex = new bsv.Script().fromBuffer(Buffer.from(hex,'hex'));
+        const hexIso = fromHex.toBuffer().toString('hex');
         if (hex != hexIso) {
             throw new Error('Not isomorphic');
         }
@@ -258,10 +261,10 @@ export class BoostPowJobModel {
      * @returns {BN} An instance of BN with the decoded difficulty bits
      */
     public static getTargetDifficulty(bits) {
-        var target = new bsv.crypto.BN(bits & 0xffffff)
+        var target = new bsv.Bn(bits & 0xffffff)
         var mov = 8 * ((bits >>> 24) - 3)
         while (mov-- > 0) {
-            target = target.mul(new bsv.crypto.BN(2))
+            target = target.mul(new bsv.Bn(2))
         }
         return target
     }
@@ -273,7 +276,7 @@ export class BoostPowJobModel {
      */
      static getDifficulty (bits) {
         var GENESIS_BITS = 0x1d00ffff;
-        var difficulty1TargetBN = BoostPowJobModel.getTargetDifficulty(GENESIS_BITS).mul(new bsv.crypto.BN(Math.pow(10, 8)))
+        var difficulty1TargetBN = BoostPowJobModel.getTargetDifficulty(GENESIS_BITS).mul(new bsv.Bn(Math.pow(10, 8)))
         var currentTargetBN = BoostPowJobModel.getTargetDifficulty(bits)
         var difficultyString = difficulty1TargetBN.div(currentTargetBN).toString(10);
         var decimalPos = difficultyString.length - 8
@@ -318,14 +321,14 @@ export class BoostPowJobModel {
         let tag;
         let additionalData;
         let userNonce;
-        let useGeneralPurposeBits; 
+        let useGeneralPurposeBits;
         // console.log('script.chunks', script.chunks,  script.chunks.length);
         if (
             // boostv01
             script.chunks[0].buf.toString('utf8') === 'boostpow' &&
 
             // Drop the identifier
-            script.chunks[1].opcodenum === bsv.Opcode.OP_DROP &&
+            script.chunks[1].opcodenum === bsv.OpCode.fromString("OP_DROP").toNumber() &&
 
             // Category
             script.chunks[2].buf &&
@@ -348,7 +351,7 @@ export class BoostPowJobModel {
             script.chunks[6].len === 4 &&
 
             // Additional Data
-            script.chunks[7].buf 
+            script.chunks[7].buf
 
         ) {
 
@@ -388,18 +391,23 @@ export class BoostPowJobModel {
         throw new Error('Not valid Boost Output');
     }
 
-    static fromHex(asm: string, txid?: string, vout?: number, value?: number): BoostPowJobModel {
-        return BoostPowJobModel.readScript(new bsv.Script(asm), txid, vout, value);
+    static fromHex(asm: string| bsv.Script, txid?: string, vout?: number, value?: number): BoostPowJobModel {
+         if(typeof asm === 'string') {
+             return BoostPowJobModel.readScript(bsv.Script.fromAsmString(asm), txid, vout, value);
+         }
+         else {
+             return BoostPowJobModel.readScript(new bsv.Script().fromBuffer(asm.toBuffer()), txid, vout, value);
+         }
     }
 
     static fromASM(asm: string, txid?: string, vout?: number, value?: number): BoostPowJobModel {
-        return BoostPowJobModel.readScript(new bsv.Script.fromASM(asm), txid, vout, value);
+        return BoostPowJobModel.readScript(bsv.Script.fromAsmString(asm), txid, vout, value);
     }
 
     toASM(): string {
         const makeHex = this.toHex();
-        const makeAsm = new bsv.Script(makeHex);
-        return makeAsm.toASM();
+        const makeAsm = new bsv.Script().fromBuffer(Buffer.from(makeHex,'hex'));
+        return makeAsm.toAsmString();
     }
 
     static fromASM4(str: string, txid?: string, vout?: number, value?: number): BoostPowJobModel {
@@ -412,7 +420,7 @@ export class BoostPowJobModel {
 
     toString(): string {
         const makeHex = this.toHex();
-        const makeAsm = new bsv.Script(makeHex);
+        const makeAsm = new bsv.Script().fromBuffer(Buffer.from(makeHex,'hex'));
         return makeAsm.toString();
     }
 
@@ -449,34 +457,34 @@ export class BoostPowJobModel {
     getScriptHash(): string {
         const hex = this.toHex();
         const buffer = Buffer.from(hex, 'hex');
-        return bsv.crypto.Hash.sha256(buffer).reverse().toString('hex');
+        return bsv.Hash.sha256(buffer).reverse().toString('hex');
     }
 
-    static fromTransaction(tx: bsv.Transaction, vout: number = 0): BoostPowJobModel | undefined {
+    static fromTransaction(tx: bsv.Tx, vout: number = 0): BoostPowJobModel | undefined {
         if (!tx) {
             return undefined;
         }
 
-        if (vout > tx.outputs.length - 1 || vout < 0 || vout === undefined || vout === null) {
+        if (vout > tx.txOuts.length - 1 || vout < 0 || vout === undefined || vout === null) {
             return undefined;
         }
 
-        if (tx.outputs[vout].script && tx.outputs[vout].script.chunks[0].buf && tx.outputs[vout].script.chunks[0].buf.toString('hex') === Buffer.from('boostpow', 'utf8').toString('hex')) {
-            return BoostPowJobModel.fromScript(tx.outputs[vout].script, tx.hash, vout, tx.outputs[vout].satoshis);
+        if (tx.txOuts[vout].script && tx.txOuts[vout].script.chunks[0].buf && tx.txOuts[vout].script.chunks[0].buf.toString('hex') === Buffer.from('boostpow', 'utf8').toString('hex')) {
+            return BoostPowJobModel.fromScript(tx.txOuts[vout].script, tx.hash().reverse().toString('hex'), vout, tx.txOuts[vout].valueBn.toNumber());
         }
 
         return undefined;
     }
 
-    static fromTransactionGetAllOutputs(tx: bsv.Transaction): BoostPowJobModel[] {
+    static fromTransactionGetAllOutputs(tx: bsv.Tx): BoostPowJobModel[] {
         if (!tx) {
             return [];
         }
         const boostJobs: BoostPowJobModel[] = [];
         let o = 0;
-        for (const out of tx.outputs) {
+        for (const out of tx.txOuts) {
             if (out.script && out.script.chunks[0].buf && out.script.chunks[0].buf.toString('hex') === Buffer.from('boostpow', 'utf8').toString('hex')) {
-                boostJobs.push(BoostPowJobModel.fromScript(out.script, tx.hash, o, out.satoshis));
+                boostJobs.push(BoostPowJobModel.fromScript(out.script, tx.hash().reverse().toString('hex'), o, out.valueBn.toNumber()));
             }
             o++;
         }
@@ -488,7 +496,8 @@ export class BoostPowJobModel {
             return undefined;
         }
 
-        const tx = new bsv.Transaction(rawtx);
+        const reader = new Br(Buffer.from(rawtx, 'hex'));
+        const tx = new bsv.Tx().fromBr(reader);
         return BoostPowJobModel.fromTransaction(tx, vout);
     }
 
@@ -499,7 +508,7 @@ export class BoostPowJobModel {
      * @param boostPowJobProof Boost job proof to use to redeem
      * @param privateKey The private key string of the minerPubKeyHash
      */
-    static createRedeemTransaction(boostPowJob: BoostPowJobModel, boostPowJobProof: BoostPowJobProofModel, privateKeyStr: string, receiveAddressStr: string): bsv.Transaction | null {
+    static createRedeemTransaction(boostPowJob: BoostPowJobModel, boostPowJobProof: BoostPowJobProofModel, privateKeyStr: string, receiveAddressStr: string): bsv.Tx | null {
         const boostPowString = BoostPowJobModel.tryValidateJobProof(boostPowJob, boostPowJobProof);
         if (!boostPowString) {
             throw new Error('createRedeemTransaction: Invalid Job Proof');
@@ -509,9 +518,9 @@ export class BoostPowJobModel {
             !boostPowJob.getValue()) {
             throw new Error('createRedeemTransaction: Boost Pow Job requires txid, vout, and value');
         }
-        let tx = new bsv.Transaction();
-        tx.addInput(
-          new bsv.Transaction.Input({
+        let tx = new bsv.Tx();
+        tx.addTxIn(
+          new bsv.TxIn({
             output: new bsv.Transaction.Output({
               script: boostPowJob.toScript(),
               satoshis: boostPowJob.getValue()
@@ -735,25 +744,25 @@ export class BoostPowJobModel {
         bsv.Opcode.OP_CAT,
         bsv.Opcode.OP_HASH256,
 
-        // SWAP TOALTSTACK CAT CAT                    // target and content + merkleroot to altstack. 
+        // SWAP TOALTSTACK CAT CAT                    // target and content + merkleroot to altstack.
         bsv.Opcode.OP_SWAP,
         bsv.Opcode.OP_TOALTSTACK,
         bsv.Opcode.OP_CAT,
         bsv.Opcode.OP_TOALTSTACK,
 
-        Buffer.from("ff1f00e0", "hex"),               // combine version/category with general purpose bits. 
-        bsv.Opcode.OP_DUP, 
-        bsv.Opcode.OP_INVERT, 
-        bsv.Opcode.OP_TOALTSTACK, 
-        bsv.Opcode.OP_AND, 
-            
-        bsv.Opcode.OP_SWAP,                           // general purpose bits 
-        bsv.Opcode.OP_FROMALTSTACK, 
-        bsv.Opcode.OP_AND, 
-        bsv.Opcode.OP_OR, 
+        Buffer.from("ff1f00e0", "hex"),               // combine version/category with general purpose bits.
+        bsv.Opcode.OP_DUP,
+        bsv.Opcode.OP_INVERT,
+        bsv.Opcode.OP_TOALTSTACK,
+        bsv.Opcode.OP_AND,
+
+        bsv.Opcode.OP_SWAP,                           // general purpose bits
+        bsv.Opcode.OP_FROMALTSTACK,
+        bsv.Opcode.OP_AND,
+        bsv.Opcode.OP_OR,
 
         bsv.Opcode.OP_FROMALTSTACK,                   // attach content + merkleroot
-        bsv.Opcode.OP_CAT, 
+        bsv.Opcode.OP_CAT,
 
         // SWAP SIZE {4} EQUALVERIFY CAT              // check size of timestamp.
         bsv.Opcode.OP_SWAP,
