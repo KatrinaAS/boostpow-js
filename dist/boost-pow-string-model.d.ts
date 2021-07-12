@@ -7,6 +7,7 @@ export declare class BoostPowStringModel {
     constructor(blockheader: bsv.BlockHeader, metadata?: BoostPowMetadataModel);
     boosthash(): string;
     hashBuffer(): Buffer;
+    content(): any;
     hash(): string;
     id(): string;
     contentHex(): string;

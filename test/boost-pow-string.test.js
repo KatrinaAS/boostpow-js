@@ -527,9 +527,9 @@ describe("boost integration test ", () => {
     expect(proof.boostPowString.hash().toUpperCase()).to.eql(proofHashHex);
     expect(proof.boostPowString.hashBuffer()).to.eql(proofHashBuffer);
 
-    expect(proof.boostPowString.contentHex()).to.eql(contentHex);
-    expect(proof.boostPowString.contentString()).to.eql(contentString);
-    expect(proof.boostPowString.contentBuffer()).to.eql(contentBuffer);
+    expect(proof.boostPowString.content().hex()).to.eql(contentHex);
+    expect(proof.boostPowString.content().string()).to.eql(contentString);
+    expect(proof.boostPowString.content().buffer()).to.eql(contentBuffer);
 
     expect(proof.boostPowString.nonce()).to.eql(nonceNumber);
     expect(proof.boostPowString.time()).to.eql(timeNumber);

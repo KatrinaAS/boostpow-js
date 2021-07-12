@@ -28,7 +28,19 @@ export class BoostPowStringModel {
         // todo: IS THIS THE RIGHT PLACE???
         return Buffer.from(this._blockheader.hash,"hex").reverse();
     }
-
+    content() : any {
+        return {
+            hex:() => {
+                return this.toObject().content;
+            },
+            string:(trimLeadingNulls= true) => {
+                return this.trimBufferString(this.toObject().content, trimLeadingNulls);
+            },
+            buffer: () => {
+                return new Buffer(this.toObject().content,'hex').reverse();
+            }
+        }
+    }
     hash(): string {
         return this._blockheader.hash;
     }
